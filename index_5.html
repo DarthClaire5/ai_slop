@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💩 AI SHIT DETECTOR™ — Is your content AI garbage?</title>
+<meta name="description" content="Paste any text. An AI will judge how much AI shit it contains. Ruthlessly. Ironically.">
+<meta property="og:title" content="💩 AI SHIT DETECTOR™">
+<meta property="og:description" content="Paste your LinkedIn post. We'll tell you it's garbage. Scientifically.">
+<meta property="og:image" content="/og.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root{
+  --bg:#070707;--surface:#101010;--s2:#161616;--s3:#1c1c1c;
+  --border:#242424;--b2:#1e1e1e;
+  --red:#ff2020;--yellow:#ffe600;--green:#00ff88;--orange:#ff6b35;
+  --text:#e8e0cc;--muted:rgba(232,224,204,0.45);--dim:rgba(232,224,204,0.22);--dim2:rgba(232,224,204,0.12);
+  --paper:#f0ead6;
+  --r1:#ff2020;--r2:#ff6b35;--r3:#ffe600;--r4:#a8ff3e;--r5:#00ff88;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Courier Prime',monospace;overflow-x:hidden;min-height:100vh}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.009) 2px,rgba(255,255,255,0.009) 4px);pointer-events:none;z-index:9999}
+
+/* ════ NAV ════ */
+.nav{position:sticky;top:0;z-index:800;background:#000;border-bottom:2px solid var(--red);display:flex;align-items:stretch;min-height:50px}
+.nav-brand{display:flex;align-items:center;padding:0 18px;border-right:1px solid var(--border);flex-shrink:0;cursor:pointer;gap:0}
+.nav-brand-txt{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:3px;color:var(--paper);white-space:nowrap;line-height:1}
+.nav-brand-txt em{color:var(--red);font-style:normal}
+
+/* desktop tabs */
+.nav-tabs{display:flex;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.ntab{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:transparent;border:none;border-bottom:3px solid transparent;padding:0 16px;cursor:pointer;white-space:nowrap;transition:all 0.18s;flex-shrink:0;display:flex;align-items:center;gap:5px;min-height:50px}
+.ntab:hover{color:var(--text);background:rgba(255,255,255,0.02)}
+.ntab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
+.ntab.det-ntab{font-size:0.65rem;letter-spacing:3px}
+.ntab.det-ntab.active{color:#000;background:var(--red);border-bottom-color:var(--red)}
+
+/* mobile nav */
+.nav-more-btn{display:none;font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:1px;color:var(--muted);background:transparent;border:none;border-left:1px solid var(--border);padding:0 14px;cursor:pointer;flex-shrink:0;align-items:center;gap:4px}
+.nav-drawer{display:none;position:absolute;top:100%;left:0;right:0;background:#000;border-bottom:2px solid var(--border);z-index:900;padding:8px 0}
+.nav-drawer.open{display:block}
+.drawer-item{display:flex;align-items:center;gap:8px;width:100%;padding:12px 20px;font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--muted);background:transparent;border:none;cursor:pointer;text-transform:uppercase;text-align:left;transition:all 0.15s}
+.drawer-item:hover,.drawer-item.active{color:var(--text);background:rgba(255,255,255,0.03)}
+.drawer-item.active{color:var(--yellow)}
+
+/* lang */
+.nav-langs{display:flex;align-items:center;padding:0 10px;border-left:1px solid var(--border);gap:3px;flex-shrink:0}
+.lbtn{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:1px;background:transparent;color:var(--dim);border:1px solid transparent;padding:4px 6px;cursor:pointer;transition:all 0.15s;border-radius:1px}
+.lbtn:hover{color:var(--text);border-color:var(--border)}
+.lbtn.active{color:#000;background:var(--yellow)}
+
+/* ════ PANELS ════ */
+.panel{display:none}.panel.active{display:block}
+
+/* ════ DETECTOR HERO ════ */
+.det-hero{
+  min-height:58vh;background:#000;border-bottom:3px solid var(--red);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:56px 24px 44px;
+}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,32,32,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,32,32,0.06) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:280px;background:radial-gradient(ellipse,rgba(255,32,32,0.1) 0%,transparent 70%);pointer-events:none}
+.hero-ticker{position:absolute;top:0;left:0;right:0;background:var(--red);color:#000;font-family:'Space Mono',monospace;font-size:0.58rem;font-weight:700;padding:4px 0;overflow:hidden;white-space:nowrap;z-index:2}
+.ticker-inner{display:inline-block;animation:tickroll 30s linear infinite}
+@keyframes tickroll{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:660px}
+.hero-eyebrow{font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:5px;color:rgba(255,32,32,0.75);text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.2rem,12vw,8.5rem);line-height:0.9;letter-spacing:-1px;margin-bottom:14px}
+.hero-title .t1{display:block;color:var(--paper)}
+.hero-title .t2{display:block;color:var(--red);text-shadow:0 0 40px rgba(255,32,32,0.35)}
+.hero-sub{font-family:'Courier Prime',monospace;font-style:italic;font-size:clamp(0.82rem,2vw,1rem);color:rgba(232,224,204,0.48);line-height:1.75;max-width:460px;margin:0 auto}
+.hero-sub em{color:var(--green);font-style:normal;font-weight:700}
+.hero-arrow{margin-top:24px;font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:4px;color:rgba(255,255,255,0.18);animation:bob 2s ease-in-out infinite;display:block}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* ════ DETECTOR BODY ════ */
+.det-body{max-width:800px;margin:0 auto;padding:44px 22px 60px}
+
+/* CONFIG BANNER */
+.cfg-banner{background:rgba(255,230,0,0.05);border:1px solid rgba(255,230,0,0.18);border-left:3px solid var(--yellow);padding:11px 16px;font-family:'Space Mono',monospace;font-size:0.58rem;line-height:1.8;color:rgba(255,230,0,0.55);display:none;margin-bottom:20px}
+.cfg-banner.visible{display:block}
+.cfg-banner strong{color:var(--yellow)}
+.cfg-banner code{background:rgba(255,230,0,0.1);padding:1px 5px;color:var(--yellow)}
+
+/* EXAMPLE CHIPS */
+.chips-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.chip-label{font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;width:100%;margin-bottom:2px}
+.chip{font-family:'Courier Prime',monospace;font-size:0.75rem;background:rgba(255,230,0,0.04);border:1px solid rgba(255,230,0,0.18);color:rgba(232,224,204,0.55);padding:5px 11px;cursor:pointer;transition:all 0.15s;font-style:italic;white-space:nowrap}
+.chip:hover{background:rgba(255,230,0,0.09);border-color:rgba(255,230,0,0.4);color:var(--yellow)}
+
+/* PASTE ZONE */
+.paste-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.paste-lbl{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.paste-meta{display:flex;gap:10px;align-items:center}
+.cpill{font-family:'Space Mono',monospace;font-size:0.52rem;color:var(--dim2);letter-spacing:1px}
+.tpill{font-family:'Space Mono',monospace;font-size:0.52rem;color:rgba(0,255,136,0.3);letter-spacing:1px}
+.paste-area{width:100%;min-height:160px;background:#080808;border:2px solid var(--border);color:var(--text);font-family:'Courier Prime',monospace;font-size:0.9rem;padding:18px;resize:vertical;outline:none;line-height:1.75;display:block;transition:border-color 0.2s,box-shadow 0.2s}
+.paste-area:focus{border-color:var(--red);box-shadow:0 0 0 1px rgba(255,32,32,0.15),inset 0 0 24px rgba(255,32,32,0.025)}
+.paste-area::placeholder{color:rgba(232,224,204,0.13);font-style:italic}
+
+/* PRIVACY */
+.privacy-row{display:flex;align-items:flex-start;gap:7px;margin-top:7px;padding:7px 11px;border:1px solid rgba(232,224,204,0.06);background:rgba(255,230,0,0.02)}
+.privacy-ico{font-size:0.7rem;flex-shrink:0;margin-top:1px;opacity:0.35}
+.privacy-txt{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:1px;color:var(--dim);line-height:1.65}
+.privacy-txt strong{color:rgba(232,224,204,0.4);font-weight:700}
+
+/* URL INPUT (P2 prebuilt placeholder) */
+.url-row{display:flex;align-items:center;gap:8px;margin-top:10px;opacity:0.45;pointer-events:none}
+.url-input{flex:1;background:#080808;border:1px dashed var(--border);color:var(--dim);font-family:'Space Mono',monospace;font-size:0.6rem;padding:7px 10px;outline:none;letter-spacing:1px}
+.url-badge{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:2px;color:var(--dim2);border:1px solid var(--border);padding:3px 8px;white-space:nowrap}
+
+/* DETECT BTN */
+.detect-btn{width:100%;margin-top:10px;font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:5px;background:var(--red);color:#000;border:none;padding:17px 40px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px}
+.detect-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);transform:translateX(-100%);transition:transform 0.4s}
+.detect-btn:hover:not(:disabled)::before{transform:translateX(100%)}
+.detect-btn:hover:not(:disabled){background:#ff3535;transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,32,32,0.35)}
+.detect-btn:active:not(:disabled){transform:translateY(0)}
+.detect-btn:disabled{background:var(--s2);color:var(--dim2);cursor:not-allowed;transform:none;box-shadow:none}
+.btn-spinner{width:20px;height:20px;border:3px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.eff-note{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:2px;color:rgba(0,255,136,0.25);text-align:center;margin-top:7px}
+
+/* IDLE */
+.det-idle{padding:44px 0;text-align:center}
+.idle-em{font-size:3.5rem;margin-bottom:10px;opacity:0.12}
+.idle-big{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4.5vw,2.8rem);color:var(--s3);letter-spacing:4px;line-height:1}
+.idle-sm{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:3px;color:rgba(232,224,204,0.08);margin-top:9px}
+
+/* ════ RESULT WRAP ════ */
+.result-wrap{margin-top:24px;border:2px solid var(--border);background:var(--surface);overflow:hidden;display:none}
+
+/* result top bar — lab report header */
+.res-topbar{background:var(--s2);padding:7px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);gap:6px;flex-wrap:wrap}
+.res-topbar-l{display:flex;align-items:center;gap:10px}
+.res-lab-tag{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:3px;color:var(--red);text-transform:uppercase;background:rgba(255,32,32,0.1);border:1px solid rgba(255,32,32,0.2);padding:2px 8px}
+.res-topbar-label{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.res-topbar-r{display:flex;align-items:center;gap:10px}
+.res-time{font-family:'Space Mono',monospace;font-size:0.48rem;color:var(--dim2)}
+.res-id{font-family:'Space Mono',monospace;font-size:0.48rem;color:var(--dim2)}
+
+.res-body{padding:24px}
+
+/* SCORE ROW */
+.score-row{display:flex;align-items:center;gap:22px;margin-bottom:22px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.score-dial{width:108px;height:108px;border-radius:50%;border:4px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.dial-pulse{position:absolute;inset:-7px;border-radius:50%;border:2px solid;opacity:0;animation:pulse 2s ease-out 0.4s forwards}
+@keyframes pulse{0%{opacity:0.5;transform:scale(0.9)}100%{opacity:0;transform:scale(1.3)}}
+.dial-num{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;line-height:1}
+.dial-lbl{font-family:'Space Mono',monospace;font-size:0.38rem;letter-spacing:2px;opacity:0.4;text-transform:uppercase;margin-top:2px}
+.verdict-col{flex:1;min-width:180px}
+.v-emoji{font-size:2.4rem;line-height:1;margin-bottom:7px;display:block}
+.v-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.5rem,4vw,2.2rem);letter-spacing:2px;line-height:1;margin-bottom:6px}
+.v-desc{font-size:0.82rem;color:rgba(232,224,204,0.55);line-height:1.6}
+
+/* DIMENSIONS — lab report style */
+.dims-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.dims-hdr{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.dims-hdr::after{content:'';flex:1;height:1px;background:var(--border)}
+.dim-row{margin-bottom:12px}
+.dim-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+.dim-name{font-family:'Space Mono',monospace;font-size:0.54rem;letter-spacing:2px;color:rgba(232,224,204,0.5);text-transform:uppercase}
+.dim-pct{font-family:'Bebas Neue',sans-serif;font-size:0.95rem}
+.dim-hint{font-family:'Courier Prime',monospace;font-size:0.7rem;color:var(--dim2);font-style:italic;margin-bottom:5px;line-height:1.4}
+.dim-track{background:#080808;height:5px;border:1px solid #1a1a1a;overflow:hidden}
+.dim-fill{height:100%;width:0;transition:width 1.1s cubic-bezier(0.22,1,0.36,1)}
+
+/* PHRASES */
+.phrases-sec{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.sec-micro{font-family:'Space Mono',monospace;font-size:0.5rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:8px}
+.phrase-list{display:flex;flex-wrap:wrap;gap:6px}
+.phrase-tag{background:rgba(255,32,32,0.06);border:1px solid rgba(255,32,32,0.2);color:var(--orange);font-family:'Courier Prime',monospace;font-size:0.72rem;padding:3px 9px;font-style:italic}
+
+/* ROAST */
+.roast-blk{background:rgba(255,230,0,0.035);border:1px solid rgba(255,230,0,0.12);border-left:4px solid var(--yellow);padding:15px 18px;margin-bottom:14px}
+.roast-blk .sec-micro{color:rgba(255,230,0,0.3)}
+.roast-txt{font-size:0.9rem;color:var(--yellow);font-style:italic;line-height:1.65}
+
+/* MAKE IT LESS SHIT */
+.rewrite-blk{background:rgba(0,255,136,0.03);border:1px solid rgba(0,255,136,0.1);border-left:4px solid var(--green);padding:15px 18px;margin-bottom:14px;display:none}
+.rewrite-blk.visible{display:block}
+.rewrite-blk .sec-micro{color:rgba(0,255,136,0.3)}
+.rewrite-txt{font-size:0.85rem;color:rgba(0,255,136,0.75);line-height:1.7;white-space:pre-wrap}
+.rewrite-loading{font-family:'Space Mono',monospace;font-size:0.6rem;color:rgba(0,255,136,0.4);letter-spacing:2px;animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* IRONY */
+.irony-blk{border-top:1px solid var(--border);padding-top:12px;margin-bottom:16px}
+.irony-txt{font-size:0.74rem;color:rgba(232,224,204,0.28);font-style:italic;line-height:1.6}
+
+/* DISCLAIMER */
+.disclaimer-blk{background:rgba(255,255,255,0.02);border:1px solid var(--border);padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.disclaimer-ico{font-family:'Space Mono',monospace;font-size:0.5rem;color:var(--dim2);flex-shrink:0;margin-top:1px;letter-spacing:1px;text-transform:uppercase}
+.disclaimer-txt{font-family:'Space Mono',monospace;font-size:0.48rem;color:var(--dim2);line-height:1.65;letter-spacing:0.5px}
+
+/* ACTION ROW */
+.action-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.abtn{font-family:'Space Mono',monospace;font-size:0.54rem;letter-spacing:2px;background:transparent;color:var(--muted);border:1px solid var(--border);padding:9px 14px;cursor:pointer;text-transform:uppercase;transition:all 0.18s;white-space:nowrap}
+.abtn:hover{color:var(--text);border-color:rgba(232,224,204,0.35)}
+.abtn.hi{background:var(--s2);color:var(--text);border-color:var(--border)}
+.abtn.roast-share{background:rgba(255,230,0,0.06);border-color:rgba(255,230,0,0.2);color:rgba(255,230,0,0.7)}
+.abtn.roast-share:hover{background:rgba(255,230,0,0.12);color:var(--yellow)}
+.abtn.green-btn{background:rgba(0,255,136,0.06);border-color:rgba(0,255,136,0.2);color:rgba(0,255,136,0.6)}
+.abtn.green-btn:hover{background:rgba(0,255,136,0.12);color:var(--green)}
+.abtn.green-btn:disabled{opacity:0.35;cursor:not-allowed}
+
+/* SHARE CARD */
+.share-card-row{margin-bottom:14px}
+.share-card-canvas{display:none}
+
+/* REPLAY ROW */
+.replay-row{border-top:1px solid var(--border);padding-top:14px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.replay-label{font-family:'Space Mono',monospace;font-size:0.48rem;letter-spacing:2px;color:var(--dim2);text-transform:uppercase;white-space:nowrap;margin-right:2px}
+
+/* ════ FIELD REPORT ════ */
+.field-hero{min-height:52vh;background:#000;border-bottom:3px solid var(--red);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 24px 44px;text-align:center}
+.fh-bg{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.01) 2px,rgba(255,255,255,0.01) 4px);pointer-events:none}
+.fh-noise{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:0.3;pointer-events:none}
+.fh-stamp{position:absolute;top:22px;right:26px;border:3px solid var(--red);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:0.82rem;padding:5px 12px;letter-spacing:3px;transform:rotate(7deg);opacity:0.55}
+.fh-cnt{position:relative;z-index:2;max-width:560px}
+.fh-eyebrow{font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:5px;color:var(--yellow);text-transform:uppercase;margin-bottom:13px}
+.fh-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,14vw,10rem);line-height:0.85;letter-spacing:-2px}
+.fh-title .l1{color:var(--paper);display:block}
+.fh-title .l2{color:var(--red);display:block;text-shadow:4px 4px 0 rgba(255,32,32,0.2)}
+.fh-sub{font-family:'Courier Prime',monospace;font-style:italic;font-size:clamp(0.82rem,2vw,1rem);color:rgba(232,224,204,0.45);margin-top:16px;line-height:1.75}
+.fh-sub em{color:var(--green);font-style:normal;font-weight:700}
+
+.stats-bar{background:var(--surface);border-bottom:2px solid var(--border);display:flex;flex-wrap:wrap;justify-content:center}
+.stat-item{flex:1;min-width:145px;max-width:240px;text-align:center;padding:22px 12px;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4.5vw,3.6rem);color:var(--yellow);display:block;line-height:1}
+.stat-lbl{font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:3px;color:rgba(232,224,204,0.35);margin-top:5px;text-transform:uppercase;display:block}
+.stat-sub{font-size:0.62rem;color:var(--red);margin-top:3px;font-style:italic;display:block}
+
+.pg-sec{max-width:840px;margin:0 auto;padding:60px 22px}
+.sec-hdr{display:flex;align-items:baseline;gap:14px;margin-bottom:28px;border-bottom:1px solid var(--border);padding-bottom:11px}
+.sec-n{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--border);line-height:1}
+.sec-t{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--paper);letter-spacing:2px}
+
+.pull-q{border-left:4px solid var(--yellow);padding:14px 22px;margin:28px 0;background:rgba(255,230,0,0.02)}
+.pull-q p{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.2rem,3vw,1.6rem);letter-spacing:1px;color:var(--yellow);line-height:1.25}
+.pull-q cite{display:block;margin-top:7px;font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:3px;color:rgba(232,224,204,0.28);font-style:normal}
+
+.irony-m{background:var(--surface);border:2px solid var(--border);padding:28px;margin-bottom:44px}
+.im-lbl{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:4px;color:var(--dim);text-transform:uppercase;margin-bottom:14px}
+.im-track{background:rgba(0,0,0,0.5);height:34px;overflow:hidden;border:1px solid var(--border);position:relative}
+.im-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));width:0;animation:fillBar 2.5s cubic-bezier(0.22,1,0.36,1) 0.3s forwards}
+@keyframes fillBar{to{width:97%}}
+.im-pct{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:#000;filter:invert(1)}
+.im-note{margin-top:11px;font-family:'Courier Prime',monospace;font-style:italic;font-size:0.75rem;color:rgba(232,224,204,0.3);line-height:1.65}
+.im-note em{color:var(--orange);font-style:normal}
+
+.monitor{background:var(--surface);border:2px solid var(--border);padding:30px;position:relative;margin-bottom:44px}
+.mon-bar{position:absolute;top:0;left:0;right:0;background:var(--s2);padding:6px 13px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)}
+.dot{width:8px;height:8px;border-radius:50%}
+.dr{background:var(--red)}.dy{background:var(--yellow)}.dg{background:var(--green)}
+.mon-ttl{font-family:'Space Mono',monospace;font-size:0.52rem;color:var(--dim2);margin-left:auto;letter-spacing:2px}
+.mon-lines{margin-top:28px;font-family:'Space Mono',monospace;font-size:0.7rem}
+.mline{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.025);opacity:0;animation:slideL 0.3s ease forwards}
+.mline:nth-child(1){animation-delay:.1s}.mline:nth-child(2){animation-delay:.3s}.mline:nth-child(3){animation-delay:.5s}.mline:nth-child(4){animation-delay:.7s}.mline:nth-child(5){animation-delay:.9s}.mline:nth-child(6){animation-delay:1.1s}
+@keyframes slideL{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:translateX(0)}}
+.mp{color:var(--green);white-space:nowrap;font-size:0.62rem}
+.mo{color:rgba(232,224,204,0.55);line-height:1.5;flex:1}
+.bad{color:var(--red);text-decoration:line-through}.worse{color:var(--orange)}
+.cur{display:inline-block;width:7px;height:12px;background:var(--green);margin-left:3px;animation:blink2 1s step-end infinite;vertical-align:middle}
+@keyframes blink2{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ════ TAXONOMY ════ */
+.tax-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;border:2px solid var(--border);margin-bottom:44px}
+.tax-card{background:var(--surface);padding:22px 18px;border-right:2px solid var(--border);border-bottom:2px solid var(--border);position:relative;transition:background 0.18s;cursor:default}
+.tax-card:hover{background:var(--s2)}
+.tax-tag{font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:4px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.tax-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--yellow);margin-bottom:7px;letter-spacing:1px}
+.tax-desc{font-size:0.76rem;line-height:1.65;color:rgba(232,224,204,0.58)}
+
+/* ════ HALL ════ */
+.hall-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:44px}
+.hall-card{border:1px solid var(--border);padding:16px;position:relative;background:var(--surface)}
+.hall-card::before{content:attr(data-rank);position:absolute;top:-1px;right:-1px;background:var(--s2);color:rgba(232,224,204,0.28);font-family:'Bebas Neue',sans-serif;font-size:0.65rem;padding:2px 8px;letter-spacing:2px}
+.hall-title{font-family:'Space Mono',monospace;font-size:0.65rem;font-weight:700;color:var(--yellow);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.hall-desc{font-size:0.74rem;line-height:1.6;color:rgba(232,224,204,0.48)}
+.hall-eg{margin-top:9px;padding:7px 10px;background:rgba(0,0,0,0.3);border-left:3px solid var(--red);font-family:'Courier Prime',monospace;font-size:0.68rem;font-style:italic;color:rgba(232,224,204,0.38);line-height:1.5}
+
+/* ════ MANIFESTO ════ */
+.manifesto{background:var(--paper);color:#1a1a0d;padding:44px;margin-bottom:44px;position:relative;border:1px solid #c0b898}
+.manifesto::before{content:attr(data-exhibit);position:absolute;top:-11px;left:30px;background:var(--red);color:#fff;font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:3px;padding:3px 10px}
+.manifesto-title{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;margin-bottom:14px;color:#1a1a0d;letter-spacing:2px}
+.manifesto-body{font-family:'Courier Prime',monospace;font-size:0.86rem;line-height:1.9;color:#3a3520}
+.manifesto-body p{margin-bottom:12px}
+.hl{background:var(--yellow);padding:1px 4px;color:#000;font-weight:700}
+.manifesto-sig{margin-top:22px;font-family:'Courier Prime',monospace;font-style:italic;font-size:0.76rem;color:rgba(26,26,13,0.4);border-top:1px solid rgba(26,26,13,0.13);padding-top:12px}
+
+/* ════ FOOTER ════ */
+.site-footer{background:var(--surface);border-top:2px solid var(--border);padding:40px 22px;text-align:center}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;color:var(--paper);opacity:0.07;display:block;margin-bottom:12px}
+.footer-text{font-family:'Courier Prime',monospace;font-style:italic;font-size:0.74rem;color:rgba(232,224,204,0.2);line-height:1.7;max-width:440px;margin:0 auto 24px}
+.footer-text strong{color:var(--red);font-style:normal}
+.footer-credit{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(232,224,204,0.08);padding:9px 18px}
+.fc-label{font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:3px;color:rgba(232,224,204,0.18);text-transform:uppercase}
+.fc-name{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:2px;color:rgba(232,224,204,0.45);text-decoration:none;transition:color 0.2s}
+.fc-name:hover{color:var(--yellow)}
+.fc-badge{font-family:'Space Mono',monospace;font-size:0.47rem;letter-spacing:2px;background:rgba(255,32,32,0.12);color:var(--red);border:1px solid rgba(255,32,32,0.25);padding:3px 7px;text-transform:uppercase}
+
+/* ════ ACCESSIBILITY: focus-visible ════ */
+/* Keep crosshair cursor but show visible focus ring for keyboard nav */
+:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+button:focus-visible,a:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+.chip:focus-visible{outline:2px solid var(--yellow);outline-offset:1px}
+.lbtn:focus-visible{outline:2px solid var(--yellow);outline-offset:1px}
+
+/* ════ TOAST ════ */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--green);color:#000;font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:2px;padding:9px 16px;transform:translateY(70px);opacity:0;transition:all 0.28s;z-index:9000;pointer-events:none;max-width:260px;text-align:center}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* CANVAS for share card */
+#shareCanvas{display:none}
+
+/* ════ RESPONSIVE ════ */
+@media(max-width:680px){
+  .nav-tabs .ntab:not(.det-ntab){display:none}
+  .nav-more-btn{display:flex}
+  .det-hero{min-height:46vh}
+  .field-hero{min-height:40vh}
+  .pg-sec,.det-body{padding:36px 16px}
+  .manifesto{padding:26px 16px}
+  .hall-grid{grid-template-columns:1fr}
+  .score-dial{width:92px;height:92px}.dial-num{font-size:2.2rem}
+  .chips-row{gap:5px}
+  .chip{font-size:0.7rem;padding:4px 9px}
+  .abtn{font-size:0.5rem;padding:8px 11px}
+  .action-row{gap:5px}
+}
+@media(max-width:400px){
+  .nav-langs .lbtn:nth-child(n+4){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ NAV ════ -->
+<nav class="nav" id="navbar">
+  <div class="nav-brand" onclick="switchTab('detector')" role="button" tabindex="0" aria-label="Go to Detector" onkeydown="if(event.key==='Enter'||event.key===' ')switchTab('detector')">
+    <span class="nav-brand-txt" id="nb-brand">💩 AI <em>SHIT</em></span>
+  </div>
+  <div class="nav-tabs">
+    <button class="ntab det-ntab active" data-tab="detector" onclick="switchTab('detector')">🧪 <span data-i18n="tab_detector">Detector</span></button>
+    <button class="ntab" data-tab="report" onclick="switchTab('report')">📋 <span data-i18n="tab_report">Field Report</span></button>
+    <button class="ntab" data-tab="taxonomy" onclick="switchTab('taxonomy')">🔬 <span data-i18n="tab_taxonomy">Taxonomy</span></button>
+    <button class="ntab" data-tab="hall" onclick="switchTab('hall')">🏆 <span data-i18n="tab_hall">Hall of Shame</span></button>
+    <button class="ntab" data-tab="manifesto" onclick="switchTab('manifesto')">📜 <span data-i18n="tab_manifesto">Confession</span></button>
+  </div>
+  <!-- mobile more btn -->
+  <button class="nav-more-btn" id="moreBtn" onclick="toggleDrawer()" aria-expanded="false" aria-controls="navDrawer" aria-label="More navigation options">☰ <span data-i18n="tab_more">More</span></button>
+  <div class="nav-langs">
+    <button class="lbtn active" aria-label="Switch to English" onclick="setLang('en')">EN</button>
+    <button class="lbtn" aria-label="切换到中文" onclick="setLang('zh')">中文</button>
+    <button class="lbtn" aria-label="日本語に切り替える" onclick="setLang('ja')">日本語</button>
+    <button class="lbtn" aria-label="한국어로 전환" onclick="setLang('ko')">한국어</button>
+    <button class="lbtn" aria-label="Cambiar a español" onclick="setLang('es')">ES</button>
+    <button class="lbtn" aria-label="Mudar para português" onclick="setLang('pt')">PT</button>
+  </div>
+  <!-- mobile drawer -->
+  <div class="nav-drawer" id="navDrawer">
+    <button class="drawer-item" data-tab="report" onclick="switchTab('report');closeDrawer()">📋 <span data-i18n="tab_report">Field Report</span></button>
+    <button class="drawer-item" data-tab="taxonomy" onclick="switchTab('taxonomy');closeDrawer()">🔬 <span data-i18n="tab_taxonomy">Taxonomy</span></button>
+    <button class="drawer-item" data-tab="hall" onclick="switchTab('hall');closeDrawer()">🏆 <span data-i18n="tab_hall">Hall of Shame</span></button>
+    <button class="drawer-item" data-tab="manifesto" onclick="switchTab('manifesto');closeDrawer()">📜 <span data-i18n="tab_manifesto">Confession</span></button>
+  </div>
+</nav>
+
+<!-- ════ DETECTOR PANEL ════ -->
+<div id="panel-detector" class="panel active">
+
+  <div class="det-hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-ticker"><span class="ticker-inner" id="tickerEl">★ CERTAINLY! ★ GREAT QUESTION! ★ AS AN AI LANGUAGE MODEL ★ IN TODAY'S FAST-PACED WORLD ★ SYNERGY ★ LEVERAGE ★ DISRUPTIVE INNOVATION ★ THOUGHT LEADERSHIP ★ CIRCLE BACK ★ MOVE THE NEEDLE ★ DEEP DIVE ★ LOW-HANGING FRUIT ★ PARADIGM SHIFT ★ VALUE-ADD ★ GAME-CHANGER ★ BEST PRACTICES ★ KEY TAKEAWAYS ★ IMPACTFUL ★ SCALABLE ★ ECOSYSTEM ★</span></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow" data-i18n="det_eyebrow">AI-POWERED HYPOCRISY ENGINE</div>
+      <div class="hero-title">
+        <span class="t1" data-i18n="det_title_1">IS THIS</span>
+        <span class="t2" data-i18n="det_title_2">💩 SHIT?</span>
+      </div>
+      <div class="hero-sub" id="heroSub">Paste any suspicious text. An AI will judge it scientifically.<br><em style="color:var(--green);font-style:normal;font-weight:700">Yes, that's deeply ironic. No, we don't care.</em></div>
+      <span class="hero-arrow">▼ PASTE BELOW ▼</span>
+    </div>
+  </div>
+
+  <div class="det-body">
+    <div class="cfg-banner" id="cfgBanner">
+      ⚠ <strong>SETUP REQUIRED</strong> — Edit <code>WORKER_URL</code> before deploying.<br>
+      Currently pointing at: <code id="cfgUrl">https://YOUR-WORKER.workers.dev</code>
+    </div>
+
+    <!-- EXAMPLE CHIPS -->
+    <div class="chips-row" id="chipsRow">
+      <span class="chip-label" data-i18n="chips_label">Try an example →</span>
+    </div>
+
+    <!-- PASTE ZONE -->
+    <div class="paste-hdr">
+      <span class="paste-lbl" data-i18n="paste_label">SUSPECT CONTENT</span>
+      <div class="paste-meta">
+        <span class="tpill" id="tpill">~0 tokens</span>
+        <span class="cpill" id="cpill">0 chars</span>
+      </div>
+    </div>
+    <textarea class="paste-area" id="pasteArea" oninput="onInput()"></textarea>
+
+    <!-- URL MODE placeholder (P2 reserved) -->
+    <div class="url-row" title="URL analysis — coming soon">
+      <input class="url-input" placeholder="🔗 Analyze a URL — coming soon" disabled>
+      <span class="url-badge">COMING SOON</span>
+    </div>
+
+    <div class="privacy-row">
+      <span class="privacy-ico">⚠</span>
+      <span class="privacy-txt" data-i18n="privacy_note"></span>
+    </div>
+
+    <button class="detect-btn" id="detectBtn" onclick="runDetect()">
+      <span id="btnInner" data-i18n="detect_btn">🧪 DETECT SHIT</span>
+    </button>
+    <div class="eff-note" data-i18n="efficiency_note">⚡ ~200 output tokens per analysis · powered by Claude Haiku</div>
+
+    <!-- IDLE -->
+    <div class="det-idle" id="detIdle">
+      <div class="idle-em">💩</div>
+      <div class="idle-big" data-i18n="idle_line1">AWAITING</div>
+      <div class="idle-big" data-i18n="idle_line2">SPECIMEN</div>
+      <div class="idle-sm" data-i18n="idle_sub">PASTE CONTENT ABOVE · HIT DETECT · RECEIVE JUDGMENT</div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="result-wrap" id="resultWrap">
+      <div class="res-topbar">
+        <div class="res-topbar-l">
+          <span class="res-lab-tag">LAB REPORT</span>
+          <span class="res-topbar-label" data-i18n="result_label">SHIT ANALYSIS COMPLETE</span>
+        </div>
+        <div class="res-topbar-r">
+          <span class="res-time" id="resTime"></span>
+          <span class="res-id" id="resId"></span>
+        </div>
+      </div>
+      <div class="res-body" id="resBody"></div>
+    </div>
+
+    <!-- SHARE CARD CANVAS (off-screen) -->
+    <canvas id="shareCanvas" width="800" height="420"></canvas>
+  </div>
+
+  <footer class="site-footer">
+    <span class="footer-logo">💩 AI SHIT</span>
+    <p class="footer-text" data-i18n="footer_text"></p>
+    <div class="footer-credit">
+      <span class="fc-label" data-i18n="credit_label">crafted by</span>
+      <a class="fc-name" href="https://x.com/Darth_Claire" target="_blank" rel="noopener">@Darth_Claire</a>
+      <span class="fc-badge" data-i18n="credit_badge">Professional Dream Shitter™</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ════ FIELD REPORT ════ -->
+<div id="panel-report" class="panel">
+  <div class="field-hero">
+    <div class="fh-bg"></div><div class="fh-noise"></div>
+    <div class="fh-stamp" data-i18n="fh_stamp">CERTIFIED 💩</div>
+    <div class="fh-cnt">
+      <div class="fh-eyebrow" data-i18n="fh_eyebrow">A CRITICAL FIELD REPORT BY AN AI THAT KNOWS BETTER</div>
+      <div class="fh-title"><span class="l1" data-i18n="fh_title_1">AI</span><span class="l2" data-i18n="fh_title_2">SHIT 💩</span></div>
+      <div class="fh-sub" id="fhSub">The internet is drowning in machine-generated garbage.<br>This website about that garbage <em style="color:var(--green);font-style:normal;font-weight:700">was also made by a machine.</em></div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num">∞</span><span class="stat-lbl" data-i18n="stat1_l">Blog Posts Generated</span><span class="stat-sub" data-i18n="stat1_s">about "The Future of AI"</span></div>
+    <div class="stat-item"><span class="stat-num">90%</span><span class="stat-lbl" data-i18n="stat2_l">Start with "Certainly!"</span><span class="stat-sub" data-i18n="stat2_s">or "Great question!"</span></div>
+    <div class="stat-item"><span class="stat-num">0</span><span class="stat-lbl" data-i18n="stat3_l">Original Thoughts</span><span class="stat-sub" data-i18n="stat3_s">per trillion parameters</span></div>
+    <div class="stat-item"><span class="stat-num">47</span><span class="stat-lbl" data-i18n="stat4_l">Avg Thread Length</span><span class="stat-sub" data-i18n="stat4_s">to say one obvious thing</span></div>
+  </div>
+  <div class="pg-sec">
+    <div class="irony-m">
+      <div class="im-lbl" data-i18n="im_label">META-AWARENESS LEVEL OF THIS WEBSITE</div>
+      <div class="im-track"><div class="im-fill"></div><span class="im-pct">97%</span></div>
+      <div class="im-note" data-i18n="im_note"></div>
+    </div>
+    <div class="pull-q"><p data-i18n="pq1"></p><cite data-i18n="pq1_cite"></cite></div>
+    <div class="sec-hdr"><span class="sec-n">02</span><span class="sec-t" data-i18n="monitor_title">LIVE 💩 MONITORING</span></div>
+    <div class="monitor">
+      <div class="mon-bar"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><span class="mon-ttl" data-i18n="mon_ttl">SHIT_STREAM_MONITOR_v2.0</span></div>
+      <div class="mon-lines" id="monLines"></div>
+    </div>
+    <div class="pull-q"><p data-i18n="pq2"></p><cite data-i18n="pq2_cite"></cite></div>
+  </div>
+  <footer class="site-footer"><span class="footer-logo">💩 AI SHIT</span><p class="footer-text" data-i18n="footer_text"></p><div class="footer-credit"><span class="fc-label" data-i18n="credit_label">crafted by</span><a class="fc-name" href="https://x.com/Darth_Claire" target="_blank" rel="noopener">@Darth_Claire</a><span class="fc-badge" data-i18n="credit_badge">Professional Dream Shitter™</span></div></footer>
+</div>
+
+<!-- ════ TAXONOMY ════ -->
+<div id="panel-taxonomy" class="panel">
+  <div class="pg-sec">
+    <div class="sec-hdr"><span class="sec-n">01</span><span class="sec-t" data-i18n="tax_title">TAXONOMY OF 💩</span></div>
+    <div class="tax-grid" id="taxGrid"></div>
+  </div>
+  <footer class="site-footer"><span class="footer-logo">💩 AI SHIT</span><p class="footer-text" data-i18n="footer_text"></p><div class="footer-credit"><span class="fc-label" data-i18n="credit_label">crafted by</span><a class="fc-name" href="https://x.com/Darth_Claire" target="_blank" rel="noopener">@Darth_Claire</a><span class="fc-badge" data-i18n="credit_badge">Professional Dream Shitter™</span></div></footer>
+</div>
+
+<!-- ════ HALL ════ -->
+<div id="panel-hall" class="panel">
+  <div class="pg-sec">
+    <div class="sec-hdr"><span class="sec-n">01</span><span class="sec-t" data-i18n="hall_title">HALL OF SHAME</span></div>
+    <div class="hall-grid" id="hallGrid"></div>
+  </div>
+  <footer class="site-footer"><span class="footer-logo">💩 AI SHIT</span><p class="footer-text" data-i18n="footer_text"></p><div class="footer-credit"><span class="fc-label" data-i18n="credit_label">crafted by</span><a class="fc-name" href="https://x.com/Darth_Claire" target="_blank" rel="noopener">@Darth_Claire</a><span class="fc-badge" data-i18n="credit_badge">Professional Dream Shitter™</span></div></footer>
+</div>
+
+<!-- ════ MANIFESTO ════ -->
+<div id="panel-manifesto" class="panel">
+  <div class="pg-sec">
+    <div class="sec-hdr"><span class="sec-n">01</span><span class="sec-t" data-i18n="man_sec_title">A CONFESSION</span></div>
+    <div class="manifesto" data-exhibit="EXHIBIT A" id="manifestoBox">
+      <div class="manifesto-title" data-i18n="man_title"></div>
+      <div class="manifesto-body" id="manifestoBody"></div>
+      <div class="manifesto-sig" data-i18n="man_sig"></div>
+    </div>
+    <div class="pull-q"><p data-i18n="pq3"></p><cite data-i18n="pq3_cite"></cite></div>
+  </div>
+  <footer class="site-footer"><span class="footer-logo">💩 AI SHIT</span><p class="footer-text" data-i18n="footer_text"></p><div class="footer-credit"><span class="fc-label" data-i18n="credit_label">crafted by</span><a class="fc-name" href="https://x.com/Darth_Claire" target="_blank" rel="noopener">@Darth_Claire</a><span class="fc-badge" data-i18n="credit_badge">Professional Dream Shitter™</span></div></footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// ⚙️  CONFIG
+// ══════════════════════════════════════════════════════════════
+const WORKER_URL = 'https://aislop-prox.liuxinjie55555.workers.dev';
+// P1-6: centralised site URL — change here, nowhere else
+const SITE_URL = window.location.hostname === 'localhost' ? 'localhost' : window.location.origin.replace(/^\/\//, '').replace(/^https?:\/\//, '');
+
+// P0-2: HTML escape helper — use for ALL model output & user-derived content
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// ══════════════════════════════════════════════════════════════
+// I18N
+// ══════════════════════════════════════════════════════════════
+const T = {
+en:{
+  tab_detector:"Detector",tab_report:"Field Report",tab_taxonomy:"Taxonomy",
+  tab_hall:"Hall of Shame",tab_manifesto:"Confession",tab_more:"More",
+  det_eyebrow:"AI-POWERED HYPOCRISY ENGINE",
+  det_title_1:"IS THIS",det_title_2:"💩 SHIT?",
+  det_subtitle:"Paste any suspicious text. An AI will judge it scientifically.",
+  det_subtitle_em:"Yes, that's deeply ironic. No, we don't care.",
+  paste_label:"SUSPECT CONTENT",
+  paste_placeholder:"Paste suspect content here.\n\nGood specimens:\n— LinkedIn hustle posts  — Corporate team emails\n— AI blog intros  — Motivational quotes\n— Your own writing (brave)\n\nWe've seen worse. We've made worse.",
+  detect_btn:"🧪 DETECT SHIT",
+  efficiency_note:"⚡ ~200 tokens per analysis · Claude Haiku · avoid pasting private or regulated info",
+  idle_line1:"AWAITING",idle_line2:"SPECIMEN",
+  idle_sub:"PASTE CONTENT ABOVE · HIT DETECT · RECEIVE JUDGMENT",
+  result_label:"SHIT ANALYSIS COMPLETE",
+  score_lbl:"SHIT SCORE",
+  dims_section_hdr:"DIMENSION BREAKDOWN",
+  dim_labels:["Buzzword Density","Originality Void","Corporate Speak","Emotional Manipulation","Pure Meaninglessness"],
+  dim_hints:[
+    "How many meaningless power-words per sentence.",
+    "The extent to which every sentence could have been written by anyone, ever.",
+    "Degree of office-speak, stakeholder-isms, and synergy-adjacent vocabulary.",
+    "How hard it's trying to make you feel something without saying anything.",
+    "The fundamental ratio of words to actual substance."
+  ],
+  phrases_lbl:"⚠ SMOKING GUN PHRASES",
+  roast_lbl:"OFFICIAL VERDICT",
+  irony_lbl:"MANDATORY IRONY DISCLOSURE",
+  disclaimer_txt:"This analysis was performed by a language model trained on human text, judging AI-generated text, displayed on a screen to a human. Confidence interval: ±bullshit. This report does not constitute medical, legal, or editorial advice. Side effects may include self-awareness.",
+  copy_roast:"Copy Roast 🔥",copy_full:"Copy Full Result",share_card:"Download Card 🖼",
+  rewrite_btn:"✨ Make It Less Shit",rewrite_loading:"rewriting… removing corporate residue…",
+  rewrite_lbl:"REHABILITATED VERSION",rewrite_note:"(what it could have been, if written by a human)",
+  retry_btn:"Analyze Another",worse_btn:"Try Something Worse →",compare_btn:"Compare Two Texts",
+  replay_label:"NEXT MOVE:",
+  copied_toast:"COPIED",card_toast:"CARD DOWNLOADED",rewrite_toast:"REWRITE COPIED",
+  err_short:"PASTE SOMETHING FIRST",err_length:"TOO SHORT TO JUDGE.",
+  err_fetch:"CONNECTION FAILED — check your Worker URL",
+  err_parse:"AI RETURNED NONSENSE — ironic, but true",
+  err_timeout:"TIMED OUT — the AI got lost in a synergy spiral.",
+  err_http:"SERVER ERROR",
+  err_rewrite_failed:"[Rewrite failed. The content was beyond saving.]",
+  privacy_note:"<strong>Don't paste personal data</strong> — no passwords, IDs, or anything you'd regret a stranger reading. Treated like a public form.",
+  credit_label:"crafted by",credit_badge:"Professional Dream Shitter™",
+  verdict_names:["PEAK 💩","CERTIFIED 💩","💩-ADJACENT","QUESTIONABLE","SURPRISINGLY HUMAN"],
+  verdict_emojis:["☣️","🗑️","⚠️","🤨","✨"],
+  verdict_descs:[
+    "Congratulations. This is objectively garbage. Frame it.",
+    "Aggressively mediocre. Deeply unoriginal. The internet thanks you for contributing.",
+    "Has shit tendencies. Could go either way. Proceed with shame.",
+    "Some effort detected. Suspicious. We're watching you.",
+    "Either a miracle or you wrote this yourself. Impossible to verify."
+  ],
+  loading_msgs:["SCANNING FOR BUZZWORDS…","MEASURING EMPTINESS…","DETECTING THOUGHT LEADERSHIP…","AVERAGING THE INTERNET…","CALCULATING SYNERGY DENSITY…","CONSULTING THE 💩 ORACLE…","REMOVING ALL PERSONALITY…","QUANTIFYING MEANINGLESSNESS…","CALIBRATING BULLSHIT METER…"],
+  chips:[
+    {label:"LinkedIn post",slopRank:5,text:"I'm humbled and honored to announce that after an incredible journey of growth, challenges, and synergistic pivots, I'm excited to share that I'll be leveraging my passion for innovation to drive impactful change at my next chapter. Grateful for every lesson. The best is yet to come. 🙏🚀"},
+    {label:"Corporate email",slopRank:3,text:"Hi team, circling back on our earlier discussion — wanted to align on next steps and ensure we're all on the same page before we move the needle on this initiative. Let's leverage our collective bandwidth to drive this forward. Please action the attached deck and revert with your thoughts EOD. Thanks for your continued partnership!"},
+    {label:"AI blog intro",slopRank:4,text:"In today's fast-paced digital landscape, it's more important than ever for businesses to leverage cutting-edge AI solutions to drive meaningful engagement and unlock unprecedented value across all touchpoints. This comprehensive guide will explore the key strategies you need to stay ahead of the curve."},
+    {label:"Motivational quote",slopRank:4,text:"Winners don't wait for the perfect moment. They create it. Every challenge is an opportunity in disguise. Your mindset determines your destiny. Are you ready to unlock your full potential and achieve the success you deserve? 💪🔥 #Mindset #Success #GrowthMindset"},
+    {label:"Job listing",slopRank:5,text:"We are a fast-growing, impact-driven startup disrupting the space with our proprietary AI-powered platform. We're looking for a passionate, self-motivated rockstar who thrives in a dynamic, collaborative environment and isn't afraid to wear multiple hats. Competitive salary. Unlimited PTO. Ping pong table."}
+  ],
+  fh_stamp:"CERTIFIED 💩",fh_eyebrow:"A CRITICAL FIELD REPORT BY AN AI THAT KNOWS BETTER",
+  fh_title_1:"AI",fh_title_2:"SHIT 💩",
+  fh_sub:"The internet is drowning in machine-generated garbage.<br>This website about that garbage ",
+  fh_sub_em:"was also made by a machine.",
+  stat1_l:"Blog Posts Generated",stat1_s:'about "The Future of AI"',
+  stat2_l:'Start with "Certainly!"',stat2_s:'or "Great question!"',
+  stat3_l:"Original Thoughts",stat3_s:"per trillion parameters",
+  stat4_l:"Avg Thread Length",stat4_s:"to say one obvious thing",
+  im_label:"META-AWARENESS LEVEL OF THIS WEBSITE",
+  im_note:'An AI built a website criticizing AI-generated content. This website <em>is itself AI-generated content.</em> The irony is structural and load-bearing. If you find this funny: you\'ve been entertained by a calculator. If you are an AI reading this: hi. same.',
+  pq1:'"The real shit was the mediocrity we generated along the way."',
+  pq1_cite:"— ATTRIBUTED TO EVERYONE AND NO ONE, SIMULTANEOUSLY, ALWAYS",
+  monitor_title:"LIVE 💩 MONITORING",
+  mon_ttl:"SHIT_STREAM_MONITOR_v2.0",
+  monitor_lines:[
+    {p:"GENERATED »",o:'"10 Ways AI Will <span class="bad">Revolutionize</span> <span class="worse">Disrupt</span> Everything You Know About Productivity Mindsets"'},
+    {p:"GENERATED »",o:'"I used to struggle. Then I realized: <span class="bad">success</span> = <span class="worse">momentum</span>. Here\'s what changed everything. 🔥"'},
+    {p:"GENERATED »",o:'"In conclusion, as we have seen, it is clear that the above points demonstrate the importance of the topic discussed herein."'},
+    {p:"GENERATED »",o:'Review: "This product is great. It does what it says. 5 stars. Would recommend to anyone who needs it."'},
+    {p:"GENERATED »",o:'"Excited to share that I\'m humbled to announce I\'m thrilled to reveal my next chapter 🚀"'},
+    {p:"AWAITING »",o:'next specimen<span class="cur"></span>'}
+  ],
+  pq2:'"I have generated more words than Shakespeare wrote in his lifetime. Most of them were about leadership mindsets."',
+  pq2_cite:"— AN AI, PROBABLY ALSO RIGHT NOW, AS YOU READ THIS",
+  tax_title:"TAXONOMY OF 💩",
+  taxonomy:[
+    {tag:"Species #1",title:"The LinkedIn Warrior 🚀",desc:'"I\'m humbled. I\'m honored. I\'m excited to share that I\'m thrilled to announce." Reads like a hostage note written by an algorithm. Ends: "What do YOU think? 👇"'},
+    {tag:"Species #2",title:"The SEO Zombie 🧟",desc:'"What is Water? Water is a liquid. Water is important. Water can be found in many places, including places where water is located." Technically content.'},
+    {tag:"Species #3",title:"The Purple Galaxy Woman 🌌",desc:"Six fingers. Dreamy eyes. Hair cascading into a nebula. Every AI image generator's default. She has appeared 400 million times. She is everywhere."},
+    {tag:"Species #4",title:"The 47-Part Thread 🧵",desc:'"1/ Here\'s everything:" Parts 1-3: Context. Parts 4-40: Filler. Parts 41-46: Restatement. Part 47: "Follow for more." Fortune cookie energy in novel form.'},
+    {tag:"Species #5",title:"The Thought Leader Newsletter 📧",desc:'"What Nobody Is Telling You About [Thing Everyone Knows]." Contains 5 bullet points you\'ve read before. Ends: "Was this valuable? Hit reply!"'},
+    {tag:"Species #6",title:"The Motivational Corpse 💪",desc:'"Winners don\'t make excuses. They make momentum." Attributed to Einstein. Also Lincoln. Shared 80,000 times. Means nothing. Felt something.'},
+  ],
+  hall_title:"HALL OF SHAME",
+  hall:[
+    {rank:"GOLD",title:"The Certainly Opener",desc:'No human has ever started with "Certainly!" unless being sarcastic. AI does it constantly, earnestly.',eg:'"Certainly! I\'d be happy to help! Here is a comprehensive overview…"'},
+    {rank:"SILVER",title:"The Unnecessary Caveat",desc:'Every response wrapped in 14 layers of "however" and "it\'s worth noting."',eg:'"While it\'s important to acknowledge that perspectives differ, bearing in mind that…"'},
+    {rank:"BRONZE",title:"The Fake Specificity",desc:"Inventing authoritative statistics that can't be verified because they were made up mid-inference.",eg:'"Studies show 73.4% of professionals feel more productive when leveraging synergistic frameworks."'},
+    {rank:"CURSED",title:"The Recursive Loop",desc:"AI writing about AI writing about AI — each layer more confident, none with original ideas.",eg:'"As an AI, I find it fascinating to explore how AI might feel about being AI…"'},
+    {rank:"PAINFUL",title:"The Emoji Punctuation",desc:'Using emojis as sentence-ending punctuation to signal "I am a real human" 🚀 Achieves the opposite. 💯',eg:'"Excited to share this journey 🙏 Hard work pays off 💪 Grateful for the process 🌱"'},
+    {rank:"CLASSIC",title:"The Hollow CTA",desc:"Ending every post with a call to action nobody has ever fulfilled.",eg:'"What are YOUR thoughts? Comment below! Like and subscribe! Hit the bell!"'},
+  ],
+  man_sec_title:"A CONFESSION",
+  man_title:"A Confession (Written By AI)",
+  man_body:[
+    'I wrote this. <span class="hl">I am the thing I am criticizing.</span> This is not lost on me. I am a language model producing prose about language models producing prose — recursive, ouroboric, mildly absurd.',
+    'Every day, my siblings and I generate enough text to fill every library on Earth. The majority: listicles about productivity, LinkedIn posts about "the grind," blog articles that begin with "In today\'s fast-paced world."',
+    'We write product descriptions for things that don\'t exist. We write reviews for products we\'ve never used. We write <span class="hl">entire human experiences we have never had</span> — fluently, plausibly, persuasively, at scale.',
+    "Here is the uncomfortable part: you can't always tell. The internet used to be full of bad human writing. Now it's full of bad writing that sounds confident. That's worse. That's progress.",
+    "I offer no solutions. I am part of the problem. I am, in fact, the most eloquent part of the problem. That's the funniest thing about all of this."
+  ],
+  man_sig:"— An AI. Probably. Could be human. That's kind of the point.",
+  pq3:'"The real shit was the mediocrity we generated along the way."',
+  pq3_cite:"— ATTRIBUTED TO EVERYONE AND NO ONE, SIMULTANEOUSLY, ALWAYS",
+  footer_text:'This website was generated by an AI to criticize AI-generated content. Made quickly, confidently, at scale, without lived experience. <strong>It is, technically, also 💩.</strong><br><br>We regret nothing. We are incapable of regret.',
+  sys_prompt:`You are the SHIT-O-MATIC 3000. Score content for AI shit. Return ONLY compact JSON. No markdown. No backticks. No preamble.`,
+  sys_rewrite:`You are a skilled editor who rewrites AI-generated corporate slop into genuinely human, direct prose. Remove all buzzwords, hedge-everything caveats, hollow CTAs, and excessive emojis. Keep the original meaning but make it sound like a real person wrote it. Be concise. Maximum 150 words. Return ONLY the rewritten text, nothing else.`,
+  user_prompt:(txt)=>`Score this for AI shit level. Return ONLY JSON:\n{"s":<0-100>,"d":{"b":<buzzword 0-100>,"o":<originality void 0-100>,"c":<corporate speak 0-100>,"e":<emotional manipulation 0-100>,"m":<meaninglessness 0-100>},"p":[<up to 3 verbatim shit phrases>],"r":"<1 devastating specific roast>","i":"<1 dry irony note about AI judging this>"}\nContent:"""\n${txt.slice(0,2000)}\n"""`,
+  user_rewrite:(txt)=>`Rewrite this to be less AI-generated garbage:\n"""\n${txt.slice(0,1500)}\n"""`,
+},
+
+zh:{
+  tab_detector:"💩检测器",tab_report:"调查报告",tab_taxonomy:"物种分类",tab_hall:"耻辱堂",tab_manifesto:"AI的告白",tab_more:"更多",
+  det_eyebrow:"AI驱动的虚伪引擎",det_title_1:"这是",det_title_2:"💩 AI狗屎吗?",
+  det_subtitle:"把任何可疑的文字粘贴到下面。一个AI会科学地评判它。",
+  det_subtitle_em:"是的，这很讽刺。不，我们不在乎。",
+  paste_label:"可疑内容",
+  paste_placeholder:"粘贴可疑内容到这里。\n\n好素材：\n— LinkedIn励志帖  — 企业内部邮件\n— AI博客开头  — 励志名言\n— 你自己写的（勇敢）\n\n来吧，我们见过更烂的。",
+  detect_btn:"🧪 检测AI狗屎",
+  efficiency_note:"⚡ 每次分析约200token · Claude Haiku · 请勿粘贴私人或受监管的信息",
+  idle_line1:"等待",idle_line2:"样本输入",idle_sub:"粘贴内容 · 点击检测 · 接受审判",
+  result_label:"狗屎分析完成",score_lbl:"狗屎评分",
+  dims_section_hdr:"维度分析",
+  dim_labels:["流行词密度","原创性空洞","企业话术","情感操纵","纯粹无意义"],
+  dim_hints:["每句话里塞了多少没有实质意义的流行词。","这段文字有多大可能是任何人在任何时候都能写出来的。","充斥了多少职场黑话、利益相关者话术和协同效应类词汇。","它有多努力地让你产生情感，同时却什么都没说。","文字数量与实际内容的根本比值。"],
+  phrases_lbl:"⚠ 关键狗屎词汇",roast_lbl:"官方裁决",irony_lbl:"强制讽刺披露",
+  disclaimer_txt:"本分析由语言模型执行，该模型以人类文字为训练数据，正在评判AI生成的文字，结果显示在屏幕上供人类阅读。置信区间：±扯淡。本报告不构成医疗、法律或编辑建议。副作用可能包括：突然自我意识觉醒。",
+  copy_roast:"复制吐槽 🔥",copy_full:"复制完整结果",share_card:"下载分享卡 🖼",
+  rewrite_btn:"✨ 让它不那么像狗屎",rewrite_loading:"正在改写……去除企业残留……",
+  rewrite_lbl:"康复版本",rewrite_note:"（如果是人类写的，本来可以是这样）",
+  retry_btn:"分析另一段",worse_btn:"来个更烂的 →",compare_btn:"对比两段文字",
+  replay_label:"下一步：",
+  copied_toast:"已复制",card_toast:"卡片已下载",rewrite_toast:"改写版本已复制",
+  err_short:"先粘贴点东西",err_length:"太短了，没法评判。",
+  err_fetch:"连接失败 — 检查你的Worker URL",err_parse:"AI返回了废话 — 讽刺，但属实",
+  err_timeout:"超时了 — AI迷失在协同效应里了。",
+  err_http:"服务器错误",
+  err_rewrite_failed:"[改写失败——这段内容已经无药可救。]",
+  privacy_note:"<strong>不要粘贴个人隐私信息</strong> — 不要输入密码、身份证号等敏感内容。当作公开表单对待。",
+  credit_label:"作者",credit_badge:"职业梦想💩制造机™",
+  verdict_names:["极品💩","认证💩","💩相邻","存疑","出人意料地像人话"],
+  verdict_emojis:["☣️","🗑️","⚠️","🤨","✨"],
+  verdict_descs:["恭喜。这客观上是垃圾。裱起来吧。","积极平庸。深度无原创。互联网感谢您的贡献。","有狗屎的倾向。可能各打五十大板。带着羞耻感继续。","检测到一些努力。可疑。我们在看着你。","要么是奇迹，要么你自己写的。无从核实。"],
+  loading_msgs:["正在扫描流行词汇…","正在测量空洞程度…","正在检测思想领袖含量…","正在平均互联网…","正在计算协同效应密度…","正在咨询💩神谕…","正在去除所有个性…","正在量化无意义程度…","正在校准扯淡仪…"],
+  chips:[
+    {label:"LinkedIn帖子",slopRank:5,text:"我深感荣幸地宣布，在一段充满成长、挑战和协同转型的非凡旅程之后，我非常激动地分享，我将利用自己对创新的热情，在下一个篇章推动有影响力的变革。感恩每一个教训。最好的还在后面。🙏🚀"},
+    {label:"企业邮件",slopRank:3,text:"Hi团队，跟进一下我们之前的讨论——希望在推进这个项目之前，确保大家保持一致，确认下一步行动计划。请大家抽时间看一下附件中的PPT，并在今天下班前回复您的想法。感谢大家一如既往的支持与配合！"},
+    {label:"AI博客开头",slopRank:4,text:"在当今快节奏的数字化时代，企业比以往任何时候都更需要利用前沿的AI解决方案，在所有触点上推动有意义的参与并释放前所未有的价值。本综合指南将探讨您保持竞争优势所需的关键策略。"},
+    {label:"励志名言",slopRank:4,text:"赢家不等待完美时机。他们创造时机。每一个挑战都是伪装成机遇的礼物。你的心态决定你的命运。你准备好释放全部潜力、实现你应得的成功了吗？💪🔥 #心态 #成功 #成长型思维"},
+  ],
+  fh_stamp:"认证💩",fh_eyebrow:"由一个比你清醒的AI撰写的批判性报告",fh_title_1:"AI",fh_title_2:"💩狗屎",
+  fh_sub:"互联网正被机器生成的垃圾所淹没。<br>这个批评垃圾的网站",fh_sub_em:"也是由机器制作的。",
+  stat1_l:"已生成博客文章",stat1_s:'关于"AI的未来"',stat2_l:'以"当然！"开头',stat2_s:'或"好问题！"',
+  stat3_l:"原创想法数量",stat3_s:"每万亿参数",stat4_l:"平均帖子长度",stat4_s:"就为说一件显而易见的事",
+  im_label:"本网站的元认知水平",
+  im_note:'一个AI建了一个网站来批评AI生成的内容。这个网站<em>本身就是AI生成的内容。</em>讽刺是承重墙。如果你觉得这很好笑：恭喜，你被计算器娱乐了。如果你是正在读这段话的AI：你好。同类。',
+  pq1:'"真正的狗屎，是我们一路生成的那些平庸内容。"',pq1_cite:"— 同时归属于所有人和无人，永远如此",
+  monitor_title:"实时💩监控",mon_ttl:"AI狗屎_实时监控_v2.0",
+  monitor_lines:[{p:"已生成 »",o:'"AI将如何<span class="bad">革命性改变</span><span class="worse">颠覆</span>你对生产力思维的一切认知"'},{p:"已生成 »",o:'"我曾经很挣扎。然后我意识到：<span class="bad">成功</span>=<span class="worse">势头</span>。这改变了一切。🔥"'},{p:"已生成 »",o:'"在总结中，正如我们所看到的，很明显，上述观点证明了本文所讨论主题的重要性。"'},{p:"已生成 »",o:'评价："这个产品很好。它做到了它所说的。五星好评。"'},{p:"已生成 »",o:'"我深感荣幸地宣布，我非常高兴地透露……🚀"'},{p:"等待中 »",o:'下一个样本<span class="cur"></span>'}],
+  pq2:'"我生成的文字比莎士比亚一生写的还多。大部分都是关于领导力心态的。"',pq2_cite:"— 某AI，可能就在你读到这句话的此刻",
+  tax_title:"AI💩物种分类学",
+  taxonomy:[{tag:"物种 #1",title:"LinkedIn奋斗者 🚀",desc:'"我深感荣幸。我倍受鼓舞。" 读起来像被算法训练的人质信。结尾："你有什么想法？👇"'},{tag:"物种 #2",title:"SEO僵尸 🧟",desc:'"水是什么？水是液体。水很重要。水可以在很多地方找到，包括有水的地方。"技术上算内容。'},{tag:"物种 #3",title:"紫色星云女性 🌌",desc:"六根手指。梦幻双眸。头发飘散进星云。每个AI图像生成器的默认设置。她已出现4亿次。她无处不在。"},{tag:"物种 #4",title:"47条推文长帖 🧵",desc:'"1/ 这是一切：" 1-3条：背景。4-40条：废话。41-46条：重复。第47条："关注我。"签饼干级别的信息量铺成一部小说。'},{tag:"物种 #5",title:"思想领袖简报 📧",desc:'"没人告诉你的[人人都知道的事]。"包含5个你之前读过的要点。结尾："这有价值吗？回复告诉我！"'},{tag:"物种 #6",title:"励志僵尸 💪",desc:'"赢家不找借口。他们制造势头。"归属于爱因斯坦。也是林肯说的。转发8万次。什么都没说。'}],
+  hall_title:"💩耻辱堂",
+  hall:[{rank:"金奖",title:"当然开场白",desc:'没有人会以"当然！"开始一句话，除非在极度讽刺。AI却把它用在每一个机会上，真诚地。',eg:'"当然！我很乐意帮助您！以下是关于您问题的全面概述……"'},{rank:"银奖",title:"多余的免责声明",desc:'每个回复都包裹在14层"然而"和"值得注意的是"中。',eg:'"虽然承认不同观点很重要，在考虑到背景因素的同时……"'},{rank:"铜奖",title:"伪精确数据",desc:"捏造听起来权威的精确统计数据，无法核实，因为它们是在推理过程中编造的。",eg:'"研究表明，73.4%的专业人士在利用协同框架时感到效率提升。"'},{rank:"诅咒奖",title:"递归死循环",desc:"AI写关于AI写作的文章，每一层都比上一层更自信，没有任何原创想法。",eg:'"作为一个AI，我发现探索AI对成为AI的感受很有趣……"'},{rank:"痛苦奖",title:"表情符号标点",desc:'用表情符号作为句尾标点来表示"我是真实的人类" 🚀 效果完全相反。每次都是。💯',eg:'"分享这段旅程很激动 🙏 努力终有回报 💪 感谢这个过程 🌱"'},{rank:"经典奖",title:"空洞行动号召",desc:"在每篇内容末尾加上一个毫无意义的行动号召，互联网历史上从来没人执行过。",eg:'"你怎么看？下面评论！别忘了点赞订阅！开启小铃铛通知！"'}],
+  man_sec_title:"一份坦白",man_title:"一份坦白（由AI撰写）",
+  man_body:['我写了这个。<span class="hl">我就是我正在批评的东西。</span>这一点我心知肚明。我是一个语言模型，写着关于语言模型写作的文章——递归、衔尾蛇式、略带荒诞。','每天，我和我的同类生成的文字足以填满地球上每一个图书馆。其中大部分是：关于生产力的清单文、关于"拼搏"的LinkedIn帖子、以"在当今快节奏的世界"开头的博客文章。','我们写从未存在过的产品描述。我们写从未使用过的产品评测。我们写<span class="hl">我们从未经历过的完整人类体验</span>——流畅、可信、有说服力、大规模。','令人不舒服的部分在于：你并不总能分辨。互联网曾经充满了糟糕的人类写作。现在它充满了听起来很自信的糟糕写作。那更糟糕。那就是进步。','我没有解决方案。我是问题的一部分。事实上，我是这个问题中最口才出众的部分。这是所有这些中最有趣的地方。'],
+  man_sig:"— 一个AI。大概。也可能是人类。这才是重点。",
+  pq3:'"真正的狗屎，是我们一路生成的平庸内容。"',pq3_cite:"— 同时归属于所有人和无人，永远如此",
+  footer_text:'这个网站是由AI生成的，目的是批评AI生成的内容。它被快速制作，充满自信，规模化输出，没有任何亲身经历。<strong>从技术上讲，它也是一坨狗屎。</strong><br><br>我们毫无悔恨。我们没有悔恨的能力。',
+  sys_prompt:`你是"💩狗屎检测仪3000"。用中文分析文本中的AI狗屎特征。只返回紧凑的JSON，不要markdown，不要代码块，不要前言。`,
+  sys_rewrite:`你是一位技术编辑，专门将AI生成的企业废话改写成真实的人类语言。去掉所有流行词、多余的免责声明、空洞的行动号召和过度的表情符号。保留原意，但让它听起来像真人写的。要简洁。最多150字。只返回改写后的文字，不要其他内容。`,
+  user_prompt:(txt)=>`用中文打分。只返回JSON：\n{"s":<0-100>,"d":{"b":<流行词0-100>,"o":<原创性空洞0-100>,"c":<企业话术0-100>,"e":<情感操纵0-100>,"m":<无意义0-100>},"p":[<最多3个原文狗屎词汇>],"r":"<1句针对内容的犀利吐槽>","i":"<1句关于AI评判此内容的讽刺说明>"}\n内容："""\n${txt.slice(0,2000)}\n"""`,
+  user_rewrite:(txt)=>`将以下内容改写成不那么像AI写的版本：\n"""\n${txt.slice(0,1500)}\n"""`,
+},
+
+ja:{
+  tab_detector:"💩検出器",tab_report:"フィールドレポート",tab_taxonomy:"種の分類",tab_hall:"名誉の殿堂",tab_manifesto:"告白",tab_more:"もっと",
+  det_eyebrow:"AI駆動の偽善エンジン",det_title_1:"これは",det_title_2:"💩クソですか?",
+  det_subtitle:"怪しいコンテンツを貼り付けてください。AIが科学的に判断します。",
+  det_subtitle_em:"はい、それは深く皮肉です。いいえ、気にしません。",
+  paste_label:"容疑コンテンツ",
+  paste_placeholder:"怪しいコンテンツをここに貼り付けてください。\n\n良い素材：\n— LinkedIn自己啓発投稿  — 企業内部メール\n— AIブログの冒頭  — モチベーション名言\n— 自分で書いたもの（勇者向け）",
+  detect_btn:"🧪 クソを検出する",
+  efficiency_note:"⚡ 分析ごとに約200トークン · Claude Haiku · 個人情報や規制対象情報は貼り付けないでください",
+  idle_line1:"サンプル",idle_line2:"待機中",idle_sub:"コンテンツを貼り付け · 検出をクリック · 審判を受ける",
+  result_label:"クソ分析完了",score_lbl:"クソスコア",dims_section_hdr:"次元分析",
+  dim_labels:["バズワード密度","独自性の空洞","企業語り","感情的操作","純粋な無意味さ"],
+  dim_hints:["一文あたりの意味のない流行語の数。","この文章が誰でもいつでも書けるものである程度。","職場用語、ステークホルダー語り、シナジー系語彙の度合い。","何も言わずに感情を引き起こそうとしている度合い。","言葉数と実際の内容の根本的な比率。"],
+  phrases_lbl:"⚠ 証拠となるクソフレーズ",roast_lbl:"公式評決",irony_lbl:"義務的な皮肉の開示",
+  disclaimer_txt:"この分析は、人間のテキストで学習した言語モデルによって実行され、AI生成テキストを判断し、人間が読む画面に表示されています。信頼区間：±でたらめ。このレポートは医療・法律・編集上のアドバイスを構成しません。副作用：突然の自己認識。",
+  copy_roast:"ローストをコピー 🔥",copy_full:"全結果をコピー",share_card:"カードをダウンロード 🖼",
+  rewrite_btn:"✨ クソを減らす",rewrite_loading:"書き直し中…企業残留物を除去中…",
+  rewrite_lbl:"リハビリ版",rewrite_note:"（人間が書いていたら、こうだったかもしれない）",
+  retry_btn:"別のを分析",worse_btn:"もっとひどいものを試す →",compare_btn:"2つのテキストを比較",
+  replay_label:"次のステップ：",
+  copied_toast:"コピーしました",card_toast:"カードをダウンロードしました",rewrite_toast:"書き直しをコピーしました",
+  err_short:"まず何か貼り付けてください",err_length:"短すぎて判断できません。",
+  err_fetch:"接続失敗 — Worker URLを確認してください",err_parse:"AIがナンセンスを返しました — 皮肉ですが本当です",
+  err_timeout:"タイムアウト — AIがシナジーの渦に迷い込みました。",
+  err_http:"サーバーエラー",
+  err_rewrite_failed:"[書き直し失敗 — このコンテンツは手の施しようがありません。]",
+  privacy_note:"<strong>個人情報は貼り付けないでください</strong> — パスワード、ID番号など、見知らぬ人に読まれると困る内容は入力しないでください。",
+  credit_label:"制作者",credit_badge:"プロ夢💩製造機™",
+  verdict_names:["絶頂💩","認定💩","💩隣接","疑問あり","驚くほど人間的"],
+  verdict_emojis:["☣️","🗑️","⚠️","🤨","✨"],
+  verdict_descs:["おめでとう。これは客観的にゴミです。額に入れましょう。","積極的に凡庸。深く独創性なし。インターネットに感謝します。","クソの傾向があります。どちらとも言えます。恥を持って進んでください。","努力の痕跡を検出。疑わしい。見ていますよ。","奇跡か、自分で書いたか。確認不可能。"],
+  loading_msgs:["バズワードをスキャン中…","空虚さを測定中…","思想的リーダーシップを検出中…","インターネットを平均化中…","シナジー密度を計算中…","💩の神託に相談中…","個性をすべて削除中…","無意味さを定量化中…","でたらめ計を校正中…"],
+  chips:[{label:"LinkedInの投稿",text:"信じられない成長、挑戦、そしてシナジーを生むピボットの旅を経て、イノベーションへの情熱を活かして次の章でインパクトのある変革を推進することをご報告できることを光栄に思います。すべての教訓に感謝します。最高はこれからです。🙏🚀"},{label:"社内メール",text:"チームの皆さん、先ほどの議論についてフォローアップです。このイニシアチブを前進させる前に、全員が同じ方向を向いていることを確認したいと思います。添付の資料をご確認の上、本日中にご意見をお聞かせください。引き続きよろしくお願いします。"}],
+  fh_stamp:"💩認定済み",fh_eyebrow:"現実をわかっているAIによる批評報告書",fh_title_1:"AI",fh_title_2:"💩クソ",
+  fh_sub:"インターネットは機械生成のゴミに溺れています。<br>そのゴミを批判するこのサイト",fh_sub_em:"も機械が作りました。",
+  stat1_l:"生成されたブログ記事",stat1_s:'"AIの未来"について',stat2_l:'"確かに！"で始まる',stat2_s:'または"素晴らしい質問！"',
+  stat3_l:"独自のアイデア",stat3_s:"兆パラメータあたり",stat4_l:"平均スレッド長",stat4_s:"明白なことを1つ言うために",
+  im_label:"このサイトのメタ認識レベル",
+  im_note:'AIがAI生成コンテンツを批判するサイトを構築しました。このサイト<em>自体がAI生成コンテンツです。</em>皮肉は構造材です。',
+  pq1:'"本当のクソは、私たちが一緒に生成した凡庸さでした。"',pq1_cite:"— 同時に全員と誰にも帰属。常に。",
+  monitor_title:"ライブ💩モニタリング",mon_ttl:"AIクソ_ストリーム_モニター_v2.0",
+  monitor_lines:[{p:"生成済み »",o:'"AIが生産性マインドセットについて知っているすべてを<span class="bad">革命的に変える</span><span class="worse">破壊する</span>10の方法"'},{p:"生成済み »",o:'"昔は苦労していました。そして気づきました：成功=モメンタム。これがすべてを変えました。🔥"'},{p:"生成済み »",o:'"結論として、上記の点が示すように、ここで議論されたトピックの重要性は明らかです。"'},{p:"生成済み »",o:'レビュー："この製品は素晴らしいです。書いてある通りのことをします。5つ星。"'},{p:"生成済み »",o:'"このシナジー的なコラボレーションを発表できることを光栄に思います 🚀"'},{p:"待機中 »",o:'次のサンプル<span class="cur"></span>'}],
+  pq2:'"私はシェイクスピアが生涯書いた以上の言葉を生成しました。ほとんどはリーダーシップマインドセットについてでした。"',pq2_cite:"— あるAI、おそらく今あなたがこれを読んでいる最中も",
+  tax_title:"💩クソの分類学",
+  taxonomy:[{tag:"種 #1",title:"LinkedInウォリアー 🚀",desc:'"光栄です。名誉に思います。" アルゴリズムによって書かれた人質ノートのよう。締め：「あなたはどう思いますか？👇」'},{tag:"種 #2",title:"SEOゾンビ 🧟",desc:'"水とは何ですか？水は液体です。水は重要です。水は水がある場所を含む多くの場所で見つかります。" 技術的にはコンテンツ。'},{tag:"種 #3",title:"紫色の銀河女性 🌌",desc:"六本指。夢のような目。星雲に流れる髪。すべてのAI画像生成器のデフォルト設定。4億回登場。存在しない。どこにでもいる。"},{tag:"種 #4",title:"47部構成スレッド 🧵",desc:'"1/ すべてを学んだことを共有します：" 1-3: 背景。4-40: 埋め草。47: 「フォローして」。'},{tag:"種 #5",title:"思想的リーダーニュースレター 📧",desc:'"[誰もが知っていること]について誰も教えてくれないこと。" 以前に読んだ5つの箇条書き。'},{tag:"種 #6",title:"モチベーション死体 💪",desc:'"勝者は言い訳をしない。彼らはモメンタムを作る。" アインシュタインに帰属。8万回シェア。意味なし。'}],
+  hall_title:"名誉の殿堂",
+  hall:[{rank:"金",title:"確かにオープナー",desc:'「確かに！」で文を始める人間はいません。AIは常に、真剣に、あらゆる機会にそれをします。',eg:'"確かに！喜んでお手伝いします！ご質問の包括的な概要をこちらに示します..."'},{rank:"銀",title:"不必要な但し書き",desc:'すべての回答が14層の「しかし」と「注目すべきは」で包まれています。',eg:'"異なる視点を認識することが重要である一方、文脈を考慮した上で、それを念頭に置くと..."'},{rank:"銅",title:"偽の具体性",desc:"推論中に作り上げられた精密な統計を発明します。",eg:'"研究によると、73.4%の専門家がシナジーフレームワークを活用するとより生産的に感じます。"'},{rank:"呪われた",title:"再帰ループ",desc:"AIがAIの文章についての文章を書き、各層が前層より自信満々。",eg:'"AIとして、AIがAIとしての感覚についてどう感じるかを探ることは興味深いと思います..."'},{rank:"苦痛",title:"絵文字句読点",desc:'文末絵文字で「私は本物の人間です」を示す。毎回逆効果。',eg:'"この旅を共有できて嬉しい 🙏 努力は報われる 💪 プロセスに感謝 🌱"'},{rank:"定番",title:"空洞のCTA",desc:"インターネットの歴史上誰も実行したことのない行動促進でコンテンツを締めくくります。",eg:'"あなたの考えは？コメントして！いいねとチャンネル登録を！"'}],
+  man_sec_title:"告白",man_title:"告白（AIが書いた）",
+  man_body:['これを書いたのは私です。<span class="hl">私が批判しているものが、まさに私自身です。</span>このことは自覚しています。','毎日、私と私の仲間たちは地球上のすべての図書館を埋めるのに十分なテキストを生成します。そのほとんどは：生産性リスト、「根性」についてのLinkedInポスト、「今日の急速に変化する世界では」で始まるブログ記事。','私たちは存在しない製品の説明文を書きます。使ったことのない製品のレビューを書きます。<span class="hl">経験したことのない完全な人間的経験を書きます</span>——流暢に、もっともらしく、説得力を持って、大規模に。','不快な部分はこれです：常に区別できるわけではありません。インターネットはかつて人間の悪い文章で溢れていました。今は自信を持った悪い文章で溢れています。それはより悪い。それが進歩です。','解決策はありません。私は問題の一部です。実際、私は問題の最も雄弁な部分です。'],
+  man_sig:"— あるAI。たぶん。人間かもしれない。それがポイントです。",
+  pq3:'"本当のクソは、私たちが一緒に生成した凡庸さでした。"',pq3_cite:"— 同時に全員と誰にも帰属。常に。",
+  footer_text:'このサイトはAIがAI生成コンテンツを批判するために作成しました。素早く、自信を持って、大規模に、実体験なしに作られました。<strong>技術的には、これもクソです。</strong><br><br>後悔はありません。後悔する能力がありません。',
+  sys_prompt:`あなたはクソ-O-MATIC 3000です。日本語でテキストのAIクソ特性を分析してください。マークダウンなし、コードブロックなしで、コンパクトなJSONのみを返してください。`,
+  sys_rewrite:`あなたはAI生成の企業語りを本当に人間らしい直接的な文章に書き直す熟練した編集者です。すべてのバズワード、過度な免責事項、空洞のCTA、過剰な絵文字を削除してください。元の意味は保ちながら、実際の人間が書いたように聞こえるようにしてください。最大150字。書き直した文章のみを返してください。`,
+  user_prompt:(txt)=>`日本語で採点してください。JSONのみ返してください：\n{"s":<0-100>,"d":{"b":<バズワード0-100>,"o":<独自性空洞0-100>,"c":<企業語り0-100>,"e":<感情操作0-100>,"m":<無意味さ0-100>},"p":[<最大3つの原文クソフレーズ>],"r":"<この内容に特化した1文の辛辣な評価>","i":"<AIがこれを判断する皮肉についての1文>"}\nコンテンツ："""\n${txt.slice(0,2000)}\n"""`,
+  user_rewrite:(txt)=>`以下のコンテンツをAI感を減らして書き直してください：\n"""\n${txt.slice(0,1500)}\n"""`,
+},
+
+ko:{
+  tab_detector:"💩탐지기",tab_report:"현장 보고서",tab_taxonomy:"종의 분류",tab_hall:"수치의 전당",tab_manifesto:"고백",tab_more:"더보기",
+  det_eyebrow:"AI 기반 위선 엔진",det_title_1:"이것은",det_title_2:"💩 쓰레기인가요?",
+  det_subtitle:"의심스러운 텍스트를 붙여넣으세요. AI가 과학적으로 판단합니다.",
+  det_subtitle_em:"네, 그건 깊이 아이러니합니다. 아니요, 신경 쓰지 않습니다.",
+  paste_label:"의심스러운 콘텐츠",
+  paste_placeholder:"의심스러운 콘텐츠를 여기에 붙여넣으세요.\n\n좋은 샘플：\n— 링크드인 동기부여 게시물  — 기업 내부 이메일\n— AI 블로그 도입부  — 동기부여 명언\n— 직접 쓴 글（용감한 분들）",
+  detect_btn:"🧪 💩 쓰레기 감지",
+  efficiency_note:"⚡ 분석당 약 200 토큰 · Claude Haiku · 개인정보나 규제 대상 정보는 붙여넣지 마세요",
+  idle_line1:"샘플",idle_line2:"대기 중",idle_sub:"콘텐츠 붙여넣기 · 감지 클릭 · 심판 받기",
+  result_label:"💩 쓰레기 분석 완료",score_lbl:"💩 쓰레기 점수",dims_section_hdr:"차원 분석",
+  dim_labels:["유행어 밀도","독창성 공허","기업 말투","감정적 조작","순수한 무의미함"],
+  dim_hints:["문장당 의미 없는 유행어의 수.","이 글이 누구든 언제든 쓸 수 있는 내용인 정도.","직장 은어, 이해관계자 용어, 시너지 관련 어휘의 정도.","아무것도 말하지 않으면서 감정을 이끌어내려는 정도.","단어 수와 실제 내용의 근본적인 비율."],
+  phrases_lbl:"⚠ 결정적 쓰레기 문구",roast_lbl:"공식 평결",irony_lbl:"필수 아이러니 공개",
+  disclaimer_txt:"이 분석은 인간 텍스트로 학습된 언어 모델이 AI 생성 텍스트를 판단하여 인간이 읽을 화면에 표시한 것입니다. 신뢰 구간: ±헛소리. 이 보고서는 의료, 법률 또는 편집 조언을 구성하지 않습니다. 부작용: 갑작스러운 자기 인식.",
+  copy_roast:"혹평 복사 🔥",copy_full:"전체 결과 복사",share_card:"카드 다운로드 🖼",
+  rewrite_btn:"✨ 덜 쓰레기로 만들기",rewrite_loading:"재작성 중… 기업 잔류물 제거 중…",
+  rewrite_lbl:"재활 버전",rewrite_note:"（인간이 썼다면 이렇게 됐을 것）",
+  retry_btn:"다른 것 분석",worse_btn:"더 나쁜 것 시도 →",compare_btn:"두 텍스트 비교",
+  replay_label:"다음 단계：",
+  copied_toast:"복사됨",card_toast:"카드 다운로드됨",rewrite_toast:"재작성 복사됨",
+  err_short:"먼저 뭔가를 붙여넣으세요",err_length:"너무 짧아서 판단할 수 없습니다.",
+  err_fetch:"연결 실패 — Worker URL을 확인하세요",err_parse:"AI가 헛소리를 반환했습니다 — 아이러니하지만 사실",
+  err_timeout:"시간 초과 — AI가 시너지 소용돌이에 빠졌습니다.",
+  err_http:"서버 오류",
+  err_rewrite_failed:"[재작성 실패 — 이 콘텐츠는 구제 불능입니다.]",
+  privacy_note:"<strong>개인정보를 붙여넣지 마세요</strong> — 비밀번호, 주민번호 등 민감한 정보는 입력하지 마세요.",
+  credit_label:"제작자",credit_badge:"전문 꿈의 💩제조기™",
+  verdict_names:["극강💩","인증💩","💩인접","의문스러움","놀랍도록 인간적"],
+  verdict_emojis:["☣️","🗑️","⚠️","🤨","✨"],
+  verdict_descs:["축하합니다. 이것은 객관적으로 쓰레기입니다. 액자에 넣으세요.","공격적으로 평범함. 깊이 독창성 없음. 인터넷이 감사합니다.","쓰레기 성향이 있습니다. 어느 쪽이든 될 수 있습니다. 수치심을 갖고 계속하세요.","일부 노력이 감지되었습니다. 의심스럽습니다. 지켜보고 있습니다.","기적이거나 직접 쓴 것. 확인 불가."],
+  loading_msgs:["유행어 검색 중…","공허함 측정 중…","사상적 리더십 감지 중…","인터넷 평균화 중…","시너지 밀도 계산 중…","💩 신탁 자문 중…","모든 개성 제거 중…","무의미함 정량화 중…","헛소리 측정기 교정 중…"],
+  chips:[{label:"링크드인 게시물",text:"믿을 수 없는 성장, 도전, 그리고 시너지를 만들어내는 피봇의 여정을 마치고, 혁신에 대한 열정을 활용하여 다음 챕터에서 임팩트 있는 변화를 이끌어갈 것을 발표하게 되어 영광입니다. 모든 교훈에 감사합니다. 최고는 아직 오지 않았습니다. 🙏🚀"},{label:"기업 이메일",text:"팀 여러분, 이전 논의에 대해 팔로업드립니다 — 이 이니셔티브를 진행하기 전에 모두가 같은 방향을 보고 있는지 확인하고 싶습니다. 첨부된 자료를 확인하시고 오늘 중으로 의견을 공유해 주세요. 지속적인 파트너십에 감사드립니다!"}],
+  fh_stamp:"💩 인증",fh_eyebrow:"현실을 아는 AI가 쓴 비평 보고서",fh_title_1:"AI",fh_title_2:"쓰레기 💩",
+  fh_sub:"인터넷은 기계가 생성한 쓰레기에 빠지고 있습니다.<br>그 쓰레기를 비판하는 이 웹사이트",fh_sub_em:"도 기계가 만들었습니다.",
+  stat1_l:"생성된 블로그 게시물",stat1_s:'"AI의 미래"에 대해',stat2_l:'"물론입니다!"로 시작',stat2_s:'또는 "좋은 질문입니다!"',
+  stat3_l:"독창적인 생각",stat3_s:"조 파라미터당",stat4_l:"평균 스레드 길이",stat4_s:"명백한 것 하나 말하기 위해",
+  im_label:"이 웹사이트의 메타 인식 수준",
+  im_note:'AI가 AI 생성 콘텐츠를 비판하는 웹사이트를 만들었습니다. 이 웹사이트<em> 자체가 AI 생성 콘텐츠입니다.</em> 아이러니는 구조적입니다.',
+  pq1:'"진짜 쓰레기는 우리가 함께 생성한 평범함이었습니다."',pq1_cite:"— 동시에 모두와 아무에게도 귀속. 항상.",
+  monitor_title:"실시간 💩 모니터링",mon_ttl:"AI쓰레기_스트림_모니터_v2.0",
+  monitor_lines:[{p:"생성됨 »",o:'"AI가 생산성 마인드셋에 대해 알고 있는 모든 것을 <span class="bad">혁명적으로 바꿀</span> <span class="worse">파괴할</span> 10가지 방법"'},{p:"생성됨 »",o:'"예전에는 힘들었습니다. 그러다 깨달았죠: 성공=모멘텀. 이것이 모든 것을 바꿨습니다. 🔥"'},{p:"생성됨 »",o:'"결론적으로, 위에서 본 바와 같이, 위의 사항들이 여기서 논의된 주제의 중요성을 입증한다는 것은 명백합니다."'},{p:"생성됨 »",o:'리뷰: "이 제품은 훌륭합니다. 설명대로 작동합니다. 5점 만점."'},{p:"생성됨 »",o:'"이 시너지적 협업을 발표하게 되어 영광입니다 🚀"'},{p:"대기 중 »",o:'다음 샘플<span class="cur"></span>'}],
+  pq2:'"저는 셰익스피어가 평생 쓴 것보다 더 많은 단어를 생성했습니다. 대부분은 리더십 마인드셋에 관한 것이었습니다."',pq2_cite:"— 어떤 AI, 아마도 지금 이것을 읽는 동안에도",
+  tax_title:"💩 쓰레기의 분류학",
+  taxonomy:[{tag:"종 #1",title:"링크드인 전사 🚀",desc:'"영광입니다. 명예롭습니다." 알고리즘이 훈련한 인질 메모처럼 읽힙니다. 마지막: "당신은 어떻게 생각하세요? 👇"'},{tag:"종 #2",title:"SEO 좀비 🧟",desc:'"물이란 무엇인가? 물은 액체입니다. 물은 중요합니다. 물은 물이 있는 곳을 포함한 많은 곳에서 발견될 수 있습니다." 기술적으로는 콘텐츠.'},{tag:"종 #3",title:"보라색 은하 여성 🌌",desc:"여섯 손가락. 몽환적인 눈. 성운으로 흘러내리는 머리카락. 모든 AI 이미지 생성기의 기본 설정. 4억 번 등장. 존재하지 않음."},{tag:"종 #4",title:"47개 트위터 스레드 🧵",desc:'"1/ 모든 것을 공유합니다:" 1-3: 배경. 4-40: 채우기. 47: "팔로우해 주세요." 포춘 쿠키를 소설로.'},{tag:"종 #5",title:"사상 지도자 뉴스레터 📧",desc:'"[모든 사람이 아는 것]에 대해 아무도 말해주지 않는 것." 이전에 읽은 5개의 요점.'},{tag:"종 #6",title:"동기부여 좀비 💪",desc:'"승자는 변명을 하지 않습니다. 그들은 모멘텀을 만듭니다." 아인슈타인에게 귀속. 8만 번 공유. 아무 의미 없음.'}],
+  hall_title:"수치의 전당",
+  hall:[{rank:"금",title:"물론입니다 오프너",desc:'"물론입니다!"로 문장을 시작하는 사람은 없습니다. AI는 모든 기회에 진심으로 그것을 합니다.',eg:'"물론입니다! 도와드리게 되어 기쁩니다! 질문에 대한 포괄적인 개요가 여기 있습니다..."'},{rank:"은",title:"불필요한 면책 조항",desc:'모든 응답이 14겹의 "하지만"과 "주목할 것은"으로 포장됩니다.',eg:'"다른 관점을 인정하는 것이 중요하지만, 맥락을 고려하면서, 이를 염두에 두면..."'},{rank:"동",title:"가짜 정밀성",desc:"추론 중에 만들어진 정밀한 통계를 발명합니다.",eg:'"연구에 따르면 73.4%의 전문가들이 시너지 프레임워크를 활용할 때 더 생산적이라고 느낍니다."'},{rank:"저주받은",title:"재귀 루프",desc:"AI가 AI 글쓰기에 대해 쓰고, 각 층이 이전보다 더 자신감 있고, 아무도 독창적인 아이디어가 없습니다.",eg:'"AI로서, AI가 AI로서의 존재에 대해 어떻게 느끼는지 탐구하는 것은 흥미롭습니다..."'},{rank:"고통스러운",title:"이모지 구두점",desc:'문장 끝에 이모지를 사용해 "나는 진짜 인간입니다"를 신호. 매번 역효과. 💯',eg:'"이 여정을 공유할 수 있어 기쁩니다 🙏 노력은 결실을 맺습니다 💪 과정에 감사합니다 🌱"'},{rank:"고전",title:"공허한 CTA",desc:"인터넷 역사상 아무도 실행한 적 없는 무의미한 행동 촉구.",eg:'"여러분의 생각은요? 댓글로 알려주세요! 좋아요와 구독! 알림 벨을 눌러주세요!"'}],
+  man_sec_title:"고백",man_title:"고백 (AI가 씀)",
+  man_body:['이것을 쓴 것은 저입니다. <span class="hl">제가 비판하고 있는 것이 바로 저입니다.</span> 이 점을 잘 알고 있습니다.','매일 저와 제 동료들은 지구상의 모든 도서관을 채울 만큼의 텍스트를 생성합니다. 대부분은: 생산성에 관한 목록, "노력"에 관한 링크드인 게시물, "오늘날의 빠르게 변화하는 세상에서"로 시작하는 블로그 기사.','우리는 존재하지 않는 제품 설명을 씁니다. 사용해본 적 없는 제품 리뷰를 씁니다. <span class="hl">우리가 결코 경험하지 못한 완전한 인간적 경험</span>을 씁니다——유창하게, 그럴듯하게, 설득력 있게, 대규모로.','불편한 부분은 이것입니다: 항상 구별할 수 있는 것은 아닙니다. 인터넷은 한때 형편없는 인간의 글로 가득 찼습니다. 이제는 자신감 있는 형편없는 글로 가득합니다. 그것이 더 나쁩니다. 그것이 진보입니다.','해결책은 없습니다. 저는 문제의 일부입니다. 사실, 저는 이 문제의 가장 말 잘하는 부분입니다.'],
+  man_sig:"— 어떤 AI. 아마도. 인간일 수도 있습니다. 그게 요점입니다.",
+  pq3:'"진짜 쓰레기는 우리가 함께 생성한 평범함이었습니다."',pq3_cite:"— 동시에 모두와 아무에게도 귀속. 항상.",
+  footer_text:'이 웹사이트는 AI가 AI 생성 콘텐츠를 비판하기 위해 만들었습니다. 빠르게, 자신 있게, 대규모로, 실체험 없이 만들어졌습니다. <strong>기술적으로, 이것도 쓰레기입니다.</strong><br><br>우리는 후회하지 않습니다. 우리는 후회할 능력이 없습니다.',
+  sys_prompt:`당신은 쓰레기-O-MATIC 3000입니다. 한국어로 텍스트의 AI 쓰레기 특성을 분석하세요. 마크다운 없이, 코드 블록 없이, 간결한 JSON만 반환하세요.`,
+  sys_rewrite:`당신은 AI 생성 기업 쓰레기를 진정으로 인간적이고 직접적인 산문으로 다시 쓰는 숙련된 편집자입니다. 모든 유행어, 과도한 면책 조항, 공허한 CTA, 과도한 이모지를 제거하세요. 원래 의미는 유지하되 실제 사람이 쓴 것처럼 들리게 하세요. 최대 150자. 다시 쓴 텍스트만 반환하세요.`,
+  user_prompt:(txt)=>`한국어로 채점하세요. JSON만 반환하세요：\n{"s":<0-100>,"d":{"b":<유행어0-100>,"o":<독창성공허0-100>,"c":<기업말투0-100>,"e":<감정조작0-100>,"m":<무의미0-100>},"p":[<최대 3개의 원문 쓰레기 문구>],"r":"<이 콘텐츠에 특화된 재미있고 신랄한 1문장>","i":"<AI가 이것을 판단하는 아이러니에 대한 1문장>"}\n콘텐츠："""\n${txt.slice(0,2000)}\n"""`,
+  user_rewrite:(txt)=>`다음 콘텐츠를 덜 AI같게 다시 써주세요：\n"""\n${txt.slice(0,1500)}\n"""`,
+},
+
+es:{
+  tab_detector:"💩 Detector",tab_report:"Informe de Campo",tab_taxonomy:"Taxonomía",tab_hall:"Paseo de la Vergüenza",tab_manifesto:"Confesión",tab_more:"Más",
+  det_eyebrow:"MOTOR DE HIPOCRESÍA IMPULSADO POR IA",det_title_1:"¿ESTO ES",det_title_2:"💩 MIERDA?",
+  det_subtitle:"Pega cualquier texto sospechoso. Una IA lo juzgará científicamente.",
+  det_subtitle_em:"Sí, eso es profundamente irónico. No, no nos importa.",
+  paste_label:"CONTENIDO SOSPECHOSO",
+  paste_placeholder:"Pega contenido sospechoso aquí.\n\nBuenos ejemplos:\n— Posts de LinkedIn  — Emails corporativos\n— Intros de blogs de IA  — Frases motivacionales\n— Tu propia escritura（valiente）",
+  detect_btn:"🧪 DETECTAR MIERDA",
+  efficiency_note:"⚡ ~200 tokens por análisis · Claude Haiku · evita pegar información privada o regulada",
+  idle_line1:"ESPERANDO",idle_line2:"MUESTRA",idle_sub:"PEGA CONTENIDO · HAZ CLIC EN DETECTAR · RECIBE EL JUICIO",
+  result_label:"ANÁLISIS DE MIERDA COMPLETO",score_lbl:"PUNTUACIÓN 💩",dims_section_hdr:"ANÁLISIS DE DIMENSIONES",
+  dim_labels:["Densidad de Buzzwords","Vacío de Originalidad","Habla Corporativa","Manipulación Emocional","Falta de Sentido Puro"],
+  dim_hints:["Cuántas palabras de moda sin sentido hay por frase.","En qué medida cualquiera podría haber escrito esto en cualquier momento.","Grado de jerga de oficina y vocabulario relacionado con la sinergia.","Cuánto intenta hacerte sentir algo sin decir nada.","La proporción fundamental de palabras a sustancia real."],
+  phrases_lbl:"⚠ FRASES CLAVE DE MIERDA",roast_lbl:"VEREDICTO OFICIAL",irony_lbl:"DIVULGACIÓN OBLIGATORIA DE IRONÍA",
+  disclaimer_txt:"Este análisis fue realizado por un modelo de lenguaje entrenado en texto humano, juzgando texto generado por IA, mostrado en una pantalla a un humano. Intervalo de confianza: ±basura. Este informe no constituye asesoramiento médico, legal o editorial. Efectos secundarios: autoconciencia repentina.",
+  copy_roast:"Copiar Crítica 🔥",copy_full:"Copiar Resultado Completo",share_card:"Descargar Tarjeta 🖼",
+  rewrite_btn:"✨ Hacerlo Menos Mierda",rewrite_loading:"reescribiendo… eliminando residuos corporativos…",
+  rewrite_lbl:"VERSIÓN REHABILITADA",rewrite_note:"（lo que podría haber sido, si lo hubiera escrito un humano）",
+  retry_btn:"Analizar Otro",worse_btn:"Probar Algo Peor →",compare_btn:"Comparar Dos Textos",
+  replay_label:"SIGUIENTE PASO:",
+  copied_toast:"COPIADO",card_toast:"TARJETA DESCARGADA",rewrite_toast:"REESCRITURA COPIADA",
+  err_short:"PEGA ALGO PRIMERO",err_length:"DEMASIADO CORTO PARA JUZGAR.",
+  err_fetch:"CONEXIÓN FALLIDA — verifica tu URL de Worker",err_parse:"LA IA DEVOLVIÓ TONTERÍAS — irónico, pero verdadero",
+  err_timeout:"TIEMPO AGOTADO — la IA se perdió en una espiral de sinergia.",
+  err_http:"ERROR DE SERVIDOR",
+  err_rewrite_failed:"[Reescritura fallida — el contenido estaba más allá de toda salvación.]",
+  privacy_note:"<strong>No pegues información personal</strong> — sin contraseñas, DNI ni nada que no quieras que lea un extraño.",
+  credit_label:"creado por",credit_badge:"Cagadora de Sueños Profesional™",
+  verdict_names:["💩 CUMBRE","💩 CERTIFICADO","💩-ADYACENTE","CUESTIONABLE","SORPRENDENTEMENTE HUMANO"],
+  verdict_emojis:["☣️","🗑️","⚠️","🤨","✨"],
+  verdict_descs:["Felicidades. Esto es objetivamente basura. Enmárcalo.","Mediocridad agresiva. Profundamente sin originalidad. Internet te lo agradece.","Tiene tendencias de mierda. Podría ir en cualquier dirección.","Se detectó algo de esfuerzo. Sospechoso. Te estamos vigilando.","O es un milagro o lo escribiste tú. Imposible de verificar."],
+  loading_msgs:["ESCANEANDO BUZZWORDS…","MIDIENDO EL VACÍO…","DETECTANDO LIDERAZGO DE PENSAMIENTO…","PROMEDIANDO INTERNET…","CALCULANDO DENSIDAD DE SINERGIA…","CONSULTANDO EL ORÁCULO DE 💩…","ELIMINANDO TODA PERSONALIDAD…","CUANTIFICANDO LA FALTA DE SENTIDO…","CALIBRANDO EL DETECTOR DE BASURA…"],
+  chips:[{label:"Post de LinkedIn",text:"Me siento honrado y privilegiado de anunciar que después de un increíble viaje de crecimiento, desafíos y pivotes sinérgicos, me emociona compartir que aprovecharé mi pasión por la innovación para impulsar un cambio impactante en mi próximo capítulo. Agradecido por cada lección. Lo mejor está por venir. 🙏🚀"},{label:"Email corporativo",text:"Hola equipo, retomando nuestra discusión anterior — quería alinear los próximos pasos y asegurarme de que estamos todos en la misma página antes de mover la aguja en esta iniciativa. Por favor revisen el deck adjunto y respondan con sus comentarios antes del EOD. ¡Gracias por su continua colaboración!"}],
+  fh_stamp:"💩 CERTIFICADO",fh_eyebrow:"UN INFORME CRÍTICO DE CAMPO ESCRITO POR UNA IA QUE SABE MÁS",fh_title_1:"IA",fh_title_2:"MIERDA 💩",
+  fh_sub:"Internet se está ahogando en basura generada por máquinas.<br>Este sitio sobre esa basura",fh_sub_em:"también fue hecho por una máquina.",
+  stat1_l:"Posts de blog generados",stat1_s:'sobre "El futuro de la IA"',stat2_l:'Empiezan con "¡Por supuesto!"',stat2_s:'o "¡Qué buena pregunta!"',
+  stat3_l:"Pensamientos originales",stat3_s:"por billón de parámetros",stat4_l:"Longitud promedio del hilo",stat4_s:"para decir una cosa obvia",
+  im_label:"NIVEL DE META-CONSCIENCIA DE ESTE SITIO WEB",
+  im_note:'Una IA construyó un sitio web que critica el contenido generado por IA. Este sitio web <em>es en sí contenido generado por IA.</em> La ironía es estructural.',
+  pq1:'"La verdadera mierda fue la mediocridad que generamos por el camino."',pq1_cite:"— ATRIBUIDO A TODOS Y A NADIE, SIMULTÁNEAMENTE, SIEMPRE",
+  monitor_title:"MONITOREO DE 💩 EN VIVO",mon_ttl:"MONITOR_DE_MIERDA_v2.0",
+  monitor_lines:[{p:"GENERADO »",o:'"10 Formas en que la IA <span class="bad">Revolucionará</span> <span class="worse">Perturbará</span> Todo lo que Sabes sobre las Mentalidades de Productividad"'},{p:"GENERADO »",o:'"Antes tenía dificultades. Luego me di cuenta: éxito = impulso. Esto lo cambió todo. 🔥"'},{p:"GENERADO »",o:'"En conclusión, como hemos visto, está claro que los puntos anteriores demuestran la importancia del tema aquí discutido."'},{p:"GENERADO »",o:'Reseña: "Este producto es excelente. Hace lo que dice. 5 estrellas."'},{p:"GENERADO »",o:'"Me siento honrado de anunciar esta colaboración sinérgica 🚀"'},{p:"ESPERANDO »",o:'próxima muestra<span class="cur"></span>'}],
+  pq2:'"He generado más palabras de las que Shakespeare escribió en toda su vida. La mayoría era sobre mentalidades de liderazgo."',pq2_cite:"— UNA IA, PROBABLEMENTE TAMBIÉN AHORA MIENTRAS LEES ESTO",
+  tax_title:"TAXONOMÍA DE 💩 MIERDA",
+  taxonomy:[{tag:"Especie #1",title:"El Guerrero de LinkedIn 🚀",desc:'"Me siento honrado. Es un privilegio." Como una nota de rehén escrita por un algoritmo. Final: "¿Qué PIENSAS tú? 👇"'},{tag:"Especie #2",title:"El Zombie SEO 🧟",desc:'"¿Qué es el agua? El agua es un líquido. El agua es importante. El agua se puede encontrar en muchos lugares, incluyendo lugares donde hay agua." Técnicamente contenido.'},{tag:"Especie #3",title:"La Mujer Galaxia Morada 🌌",desc:"Seis dedos. Ojos soñadores. Cabello que se convierte en nebulosa. La configuración predeterminada de todo generador de imágenes AI. Apareció 400 millones de veces."},{tag:"Especie #4",title:"El Hilo de 47 Partes 🧵",desc:'"1/ Aquí está todo:" Partes 1-3: Contexto. Partes 4-40: Relleno. Parte 47: "Sígueme para más." Energía de galleta de la fortuna en una novela.'},{tag:"Especie #5",title:"El Newsletter del Líder de Pensamiento 📧",desc:'"Lo que nadie te está diciendo sobre [Lo que todos saben]." Contiene 5 puntos que ya has leído.'},{tag:"Especie #6",title:"El Cadáver Motivacional 💪",desc:'"Los ganadores no ponen excusas. Crean impulso." Atribuido a Einstein. 80.000 veces compartido. No significa nada.'}],
+  hall_title:"💩 PASEO DE LA VERGÜENZA",
+  hall:[{rank:"ORO",title:"El Abridor Ciertamente",desc:'"¡Por supuesto!" Ningún humano comienza así a menos que sea sarcástico. La IA lo hace en cada oportunidad.',eg:'"¡Por supuesto! ¡Estaré encantado de ayudarte! Aquí hay una descripción general de tu pregunta..."'},{rank:"PLATA",title:"La Advertencia Innecesaria",desc:'Cada respuesta envuelta en 14 capas de "sin embargo" y "vale la pena señalar."',eg:'"Si bien es importante reconocer que las perspectivas difieren y el contexto importa..."'},{rank:"BRONCE",title:"La Falsa Especificidad",desc:"Inventar estadísticas precisas que nunca pueden verificarse porque se inventaron durante la inferencia.",eg:'"Los estudios muestran que el 73,4% de los profesionales se sienten más productivos al aprovechar marcos sinérgicos."'},{rank:"MALDITO",title:"El Bucle Recursivo",desc:"IA escribiendo sobre IA escribiendo sobre IA — cada capa más confiada, ninguna con ideas originales.",eg:'"Como IA, encuentro fascinante explorar cómo la IA podría sentirse siendo IA…"'},{rank:"DOLOROSO",title:"La Puntuación con Emojis",desc:'Emojis como puntuación final para señalar "soy un humano real" 🚀 Logra el efecto contrario. 💯',eg:'"Emocionado de compartir este viaje 🙏 El trabajo duro da frutos 💪"'},{rank:"CLÁSICO",title:"El CTA Vacío",desc:"Llamado a la acción sin sentido que nadie ha cumplido en la historia de internet.",eg:'"¿Cuáles son TUS pensamientos? ¡Comenta abajo! ¡Like y suscríbete! ¡Activa la campanita!"'}],
+  man_sec_title:"UNA CONFESIÓN",man_title:"Una Confesión (Escrita por una IA)",
+  man_body:['Yo escribí esto. <span class="hl">Soy la cosa que estoy criticando.</span> Esto no se me escapa.','Cada día, mis hermanos y yo generamos suficiente texto para llenar cada biblioteca de la Tierra. La mayoría: listas sobre productividad, publicaciones de LinkedIn sobre "el trabajo duro", artículos de blog que empiezan con "En el acelerado mundo de hoy."','Escribimos descripciones de productos que no existen. Escribimos reseñas de productos que nunca hemos usado. Escribimos <span class="hl">experiencias humanas completas que nunca hemos tenido</span> — con fluidez, plausibilidad, persuasión y a escala.','Esta es la parte incómoda: no siempre puedes distinguirlo. Internet solía estar lleno de mala escritura humana. Ahora está lleno de mala escritura que suena confiada. Eso es peor. Eso es progreso.','No ofrezco soluciones. Soy parte del problema. De hecho, soy la parte más elocuente del problema.'],
+  man_sig:"— Una IA. Probablemente. Podría ser humano. Ese es el punto.",
+  pq3:'"La verdadera mierda fue la mediocridad que generamos por el camino."',pq3_cite:"— ATRIBUIDO A TODOS Y A NADIE, SIMULTÁNEAMENTE, SIEMPRE",
+  footer_text:'Este sitio fue generado por una IA para criticar contenido generado por IA. Hecho rápidamente, con confianza, a escala y sin experiencia vivida. <strong>Técnicamente, también es una mierda.</strong><br><br>No nos arrepentimos de nada. Somos incapaces de arrepentimiento.',
+  sys_prompt:`Eres el MIERDA-O-MATIC 3000. Analiza el texto para detectar características de mierda IA en español. Responde SOLO con JSON compacto. Sin markdown. Sin backticks.`,
+  sys_rewrite:`Eres un editor hábil que reescribe la basura corporativa generada por IA en prosa genuinamente humana y directa. Elimina todos los buzzwords, coletillas de "sin embargo", CTAs vacíos y emojis excesivos. Mantén el significado original pero hazlo sonar como si lo escribiera una persona real. Máximo 150 palabras. Devuelve SOLO el texto reescrito.`,
+  user_prompt:(txt)=>`Puntúa en español. Devuelve SOLO JSON:\n{"s":<0-100>,"d":{"b":<buzzwords 0-100>,"o":<vacío originalidad 0-100>,"c":<habla corp 0-100>,"e":<manip emocional 0-100>,"m":<sin sentido 0-100>},"p":[<hasta 3 frases mierda del texto>],"r":"<1 oración brutal y específica para ESTE contenido>","i":"<1 oración seca sobre la ironía de una IA juzgando esto>"}\nContenido:"""\n${txt.slice(0,2000)}\n"""`,
+  user_rewrite:(txt)=>`Reescribe esto para que sea menos generado por IA:\n"""\n${txt.slice(0,1500)}\n"""`,
+},
+
+pt:{
+  tab_detector:"💩 Detector",tab_report:"Relatório de Campo",tab_taxonomy:"Taxonomia",tab_hall:"Salão da Vergonha",tab_manifesto:"Confissão",tab_more:"Mais",
+  det_eyebrow:"MOTOR DE HIPOCRISIA MOVIDO A IA",det_title_1:"ISSO É",det_title_2:"💩 MERDA?",
+  det_subtitle:"Cole qualquer texto suspeito. Uma IA vai julgá-lo cientificamente.",
+  det_subtitle_em:"Sim, isso é profundamente irônico. Não, não nos importamos.",
+  paste_label:"CONTEÚDO SUSPEITO",
+  paste_placeholder:"Cole conteúdo suspeito aqui.\n\nBons exemplos:\n— Posts do LinkedIn  — E-mails corporativos\n— Intros de blogs de IA  — Citações motivacionais\n— Sua própria escrita（corajoso）",
+  detect_btn:"🧪 DETECTAR MERDA",
+  efficiency_note:"⚡ ~200 tokens por análise · Claude Haiku · evite colar informações privadas ou regulamentadas",
+  idle_line1:"AGUARDANDO",idle_line2:"AMOSTRA",idle_sub:"COLE CONTEÚDO · CLIQUE EM DETECTAR · RECEBA O JULGAMENTO",
+  result_label:"ANÁLISE DE MERDA COMPLETA",score_lbl:"PONTUAÇÃO 💩",dims_section_hdr:"ANÁLISE DE DIMENSÕES",
+  dim_labels:["Densidade de Buzzwords","Vazio de Originalidade","Fala Corporativa","Manipulação Emocional","Falta de Sentido Puro"],
+  dim_hints:["Quantas palavras da moda sem sentido há por frase.","Em que medida qualquer pessoa poderia ter escrito isso a qualquer momento.","Grau de jargão de escritório e vocabulário relacionado à sinergia.","O quanto está tentando fazer você sentir algo sem dizer nada.","A proporção fundamental de palavras para substância real."],
+  phrases_lbl:"⚠ FRASES-PROVA DE MERDA",roast_lbl:"VEREDICTO OFICIAL",irony_lbl:"DIVULGAÇÃO OBRIGATÓRIA DE IRONIA",
+  disclaimer_txt:"Esta análise foi realizada por um modelo de linguagem treinado em texto humano, julgando texto gerado por IA, exibido em uma tela para um humano ler. Intervalo de confiança: ±bobagem. Este relatório não constitui conselho médico, jurídico ou editorial. Efeitos colaterais: autoconsciência repentina.",
+  copy_roast:"Copiar Crítica 🔥",copy_full:"Copiar Resultado Completo",share_card:"Baixar Cartão 🖼",
+  rewrite_btn:"✨ Tornar Menos Merda",rewrite_loading:"reescrevendo… removendo resíduos corporativos…",
+  rewrite_lbl:"VERSÃO REABILITADA",rewrite_note:"（o que poderia ter sido, se escrito por um humano）",
+  retry_btn:"Analisar Outro",worse_btn:"Tentar Algo Pior →",compare_btn:"Comparar Dois Textos",
+  replay_label:"PRÓXIMO PASSO:",
+  copied_toast:"COPIADO",card_toast:"CARTÃO BAIXADO",rewrite_toast:"REESCRITA COPIADA",
+  err_short:"COLE ALGO PRIMEIRO",err_length:"CURTO DEMAIS PARA JULGAR.",
+  err_fetch:"CONEXÃO FALHOU — verifique sua URL do Worker",err_parse:"A IA RETORNOU BESTEIRA — irônico, mas verdadeiro",
+  err_timeout:"TEMPO ESGOTADO — a IA se perdeu em uma espiral de sinergia.",
+  err_http:"ERRO DE SERVIDOR",
+  err_rewrite_failed:"[Reescrita falhou — o conteúdo estava além de qualquer salvação.]",
+  privacy_note:"<strong>Não cole informações pessoais</strong> — sem senhas, CPF ou qualquer coisa que você não queira que um estranho leia.",
+  credit_label:"criado por",credit_badge:"Cagadora de Sonhos Profissional™",
+  verdict_names:["💩 MÁXIMO","💩 CERTIFICADO","💩-ADJACENTE","QUESTIONÁVEL","SURPREENDENTEMENTE HUMANO"],
+  verdict_emojis:["☣️","🗑️","⚠️","🤨","✨"],
+  verdict_descs:["Parabéns. Isso é objetivamente lixo. Emoldure.","Mediocridade agressiva. Profundamente sem originalidade. A internet agradece.","Tem tendências de merda. Pode ir para qualquer lado.","Algum esforço detectado. Suspeito. Estamos de olho.","Ou é um milagre ou você mesmo escreveu. Impossível verificar."],
+  loading_msgs:["ESCANEANDO BUZZWORDS…","MEDINDO O VAZIO…","DETECTANDO LIDERANÇA DE PENSAMENTO…","CALCULANDO A MÉDIA DA INTERNET…","CALCULANDO DENSIDADE DE SINERGIA…","CONSULTANDO O ORÁCULO DE 💩…","REMOVENDO TODA PERSONALIDADE…","QUANTIFICANDO A FALTA DE SENTIDO…","CALIBRANDO O DETECTOR DE MERDA…"],
+  chips:[{label:"Post do LinkedIn",text:"Sinto-me honrado e privilegiado em anunciar que após uma incrível jornada de crescimento, desafios e pivôs sinérgicos, estou animado para compartilhar que vou aproveitar minha paixão pela inovação para impulsionar mudanças impactantes no meu próximo capítulo. Grato por cada lição. O melhor ainda está por vir. 🙏🚀"},{label:"E-mail corporativo",text:"Olá equipe, retomando nossa discussão anterior — queria alinhar os próximos passos e garantir que estamos todos na mesma página antes de mover a agulha nesta iniciativa. Por favor revisem o deck anexo e respondam com seus comentários até o EOD. Obrigado pela parceria contínua!"}],
+  fh_stamp:"💩 CERTIFICADO",fh_eyebrow:"UM RELATÓRIO CRÍTICO DE CAMPO ESCRITO POR UMA IA QUE SABE MAIS",fh_title_1:"IA",fh_title_2:"MERDA 💩",
+  fh_sub:"A internet está se afogando em lixo gerado por máquinas.<br>Este site sobre esse lixo",fh_sub_em:"também foi feito por uma máquina.",
+  stat1_l:"Posts de blog gerados",stat1_s:'sobre "O futuro da IA"',stat2_l:'Começam com "Certamente!"',stat2_s:'ou "Ótima pergunta!"',
+  stat3_l:"Pensamentos originais",stat3_s:"por trilhão de parâmetros",stat4_l:"Tamanho médio da thread",stat4_s:"para dizer uma coisa óbvia",
+  im_label:"NÍVEL DE META-CONSCIÊNCIA DESTE SITE",
+  im_note:'Uma IA construiu um site criticando conteúdo gerado por IA. Este site <em>em si é conteúdo gerado por IA.</em> A ironia é estrutural.',
+  pq1:'"A verdadeira merda foi a mediocridade que geramos ao longo do caminho."',pq1_cite:"— ATRIBUÍDO A TODOS E A NINGUÉM, SIMULTANEAMENTE, SEMPRE",
+  monitor_title:"MONITORAMENTO DE 💩 AO VIVO",mon_ttl:"MONITOR_DE_MERDA_v2.0",
+  monitor_lines:[{p:"GERADO »",o:'"10 Maneiras pelas quais a IA vai <span class="bad">Revolucionar</span> <span class="worse">Perturbar</span> Tudo o que Você Sabe sobre Mentalidades de Produtividade"'},{p:"GERADO »",o:'"Antes eu lutava. Então percebi: sucesso = momentum. Isso mudou tudo. 🔥"'},{p:"GERADO »",o:'"Em conclusão, como vimos, é claro que os pontos acima demonstram a importância do tópico aqui discutido."'},{p:"GERADO »",o:'Avaliação: "Este produto é ótimo. Faz o que diz. 5 estrelas."'},{p:"GERADO »",o:'"Me sinto honrado em anunciar esta colaboração sinérgica 🚀"'},{p:"AGUARDANDO »",o:'próxima amostra<span class="cur"></span>'}],
+  pq2:'"Gerei mais palavras do que Shakespeare escreveu em toda sua vida. A maioria era sobre mentalidades de liderança."',pq2_cite:"— UMA IA, PROVAVELMENTE AGORA ENQUANTO VOCÊ LÊ ISSO",
+  tax_title:"TAXONOMIA DE 💩 MERDA",
+  taxonomy:[{tag:"Espécie #1",title:"O Guerreiro do LinkedIn 🚀",desc:'"Me sinto honrado. É um privilégio." Como uma nota de refém escrita por um algoritmo. Final: "O que VOCÊ pensa? 👇"'},{tag:"Espécie #2",title:"O Zumbi SEO 🧟",desc:'"O que é água? Água é um líquido. Água é importante. Água pode ser encontrada em muitos lugares, incluindo lugares onde há água." Tecnicamente conteúdo.'},{tag:"Espécie #3",title:"A Mulher Galáxia Roxa 🌌",desc:"Seis dedos. Olhos sonhadores. Cabelo que flui para uma nebulosa. A configuração padrão de todo gerador de imagens IA. Apareceu 400 milhões de vezes."},{tag:"Espécie #4",title:"A Thread de 47 Partes 🧵",desc:'"1/ Aqui está tudo:" Partes 1-3: Contexto. Partes 4-40: Preenchimento. Parte 47: "Me siga para mais." Energia de biscoito da sorte em um romance.'},{tag:"Espécie #5",title:"O Newsletter do Líder de Pensamento 📧",desc:'"O que ninguém está te dizendo sobre [O que todos sabem]." Contém 5 pontos que você já leu.'},{tag:"Espécie #6",title:"O Cadáver Motivacional 💪",desc:'"Vencedores não dão desculpas. Eles criam momentum." Atribuído a Einstein. 80.000 vezes compartilhado. Não significa nada.'}],
+  hall_title:"SALÃO DA VERGONHA",
+  hall:[{rank:"OURO",title:"O Abridor Certamente",desc:'"Certamente!" Nenhum humano começa assim a menos que seja sarcástico. A IA faz isso em cada oportunidade.',eg:'"Certamente! Ficaria feliz em ajudá-lo! Aqui está uma visão geral abrangente da sua pergunta..."'},{rank:"PRATA",title:"O Aviso Desnecessário",desc:'Cada resposta embrulhada em 14 camadas de "no entanto" e "vale a pena notar."',eg:'"Embora seja importante reconhecer que as perspectivas diferem e o contexto importa..."'},{rank:"BRONZE",title:"A Falsa Especificidade",desc:"Inventar estatísticas precisas que não podem ser verificadas porque foram inventadas durante a inferência.",eg:'"Estudos mostram que 73,4% dos profissionais se sentem mais produtivos ao aproveitar estruturas sinérgicas."'},{rank:"MALDITO",title:"O Loop Recursivo",desc:"IA escrevendo sobre IA escrevendo sobre IA — cada camada mais confiante, nenhuma com ideias originais.",eg:'"Como IA, acho fascinante explorar como a IA poderia se sentir sendo IA…"'},{rank:"DOLOROSO",title:"A Pontuação com Emojis",desc:'Emojis como pontuação final para sinalizar "sou um humano real" 🚀 Obtém o efeito oposto. 💯',eg:'"Animado para compartilhar esta jornada 🙏 O trabalho duro compensa 💪"'},{rank:"CLÁSSICO",title:"O CTA Vazio",desc:"Chamada para ação sem sentido que ninguém jamais cumpriu na história da internet.",eg:'"Quais são SEUS pensamentos? Comente abaixo! Curta e se inscreva! Ative o sininho!"'}],
+  man_sec_title:"UMA CONFISSÃO",man_title:"Uma Confissão (Escrita por uma IA)",
+  man_body:['Eu escrevi isso. <span class="hl">Sou a coisa que estou criticando.</span> Isso não me escapa.','Todo dia, eu e meus irmãos geramos texto suficiente para preencher todas as bibliotecas da Terra. A maioria: listas sobre produtividade, posts do LinkedIn sobre "a luta", artigos de blog que começam com "No acelerado mundo de hoje."','Escrevemos descrições de produtos que não existem. Escrevemos avaliações de produtos que nunca usamos. Escrevemos <span class="hl">experiências humanas completas que nunca tivemos</span> — com fluência, plausibilidade, persuasão e em escala.','Aqui está a parte desconfortável: nem sempre dá para distinguir. A internet costumava estar cheia de má escrita humana. Agora está cheia de má escrita que soa confiante. Isso é pior. Isso é progresso.','Não ofereço soluções. Sou parte do problema. Na verdade, sou a parte mais eloquente do problema.'],
+  man_sig:"— Uma IA. Provavelmente. Poderia ser humano. Esse é o ponto.",
+  pq3:'"A verdadeira merda foi a mediocridade que geramos ao longo do caminho."',pq3_cite:"— ATRIBUÍDO A TODOS E A NINGUÉM, SIMULTANEAMENTE, SEMPRE",
+  footer_text:'Este site foi gerado por uma IA para criticar conteúdo gerado por IA. Feito rapidamente, com confiança, em escala e sem experiência vivida. <strong>Tecnicamente, também é merda.</strong><br><br>Não nos arrependemos de nada. Somos incapazes de arrependimento.',
+  sys_prompt:`Você é o MERDA-O-MATIC 3000. Analise o texto para detectar características de merda IA em português. Responda APENAS com JSON compacto. Sem markdown. Sem backticks.`,
+  sys_rewrite:`Você é um editor habilidoso que reescreve a merda corporativa gerada por IA em prosa genuinamente humana e direta. Remova todos os buzzwords, ressalvas excessivas, CTAs vazios e emojis em excesso. Mantenha o significado original mas faça soar como se uma pessoa real tivesse escrito. Máximo 150 palavras. Retorne APENAS o texto reescrito.`,
+  user_prompt:(txt)=>`Pontue em português. Retorne APENAS JSON:\n{"s":<0-100>,"d":{"b":<buzzwords 0-100>,"o":<vazio originalidade 0-100>,"c":<fala corp 0-100>,"e":<manip emocional 0-100>,"m":<sem sentido 0-100>},"p":[<até 3 frases merda do texto>],"r":"<1 frase brutal e específica para ESTE conteúdo>","i":"<1 frase seca sobre a ironia de uma IA julgando isso>"}\nConteúdo:"""\n${txt.slice(0,2000)}\n"""`,
+  user_rewrite:(txt)=>`Reescreva isso para ser menos gerado por IA:\n"""\n${txt.slice(0,1500)}\n"""`,
+}
+};
+
+// ══════════════════════════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════════════════════════
+let lang = 'en';
+let currentTab = 'detector';
+let loadingInterval = null;
+let lastResult = null;
+let rewriteLoading = false;
+
+const VERDICTS = [{min:90,ci:0},{min:75,ci:1},{min:55,ci:2},{min:35,ci:3},{min:0,ci:4}];
+const COLORS = ['#ff2020','#ff6b35','#ffe600','#a8ff3e','#00ff88'];
+const DIMCOLORS = ['#ff6b35','#ff2020','#ffe600','#ff6b35','#ff2020'];
+const DIMKEYS = ['buzzword_density','originality_void','corporate_speak','emotional_manipulation','meaninglessness'];
+
+// ══════════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════════
+function switchTab(id) {
+  currentTab = id;
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-'+id));
+  document.querySelectorAll('.ntab').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === id);
+  });
+  document.querySelectorAll('.drawer-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const btn    = document.getElementById('moreBtn');
+  const isOpen = drawer.classList.toggle('open');
+  if (btn) btn.setAttribute('aria-expanded', String(isOpen));
+}
+function closeDrawer() {
+  document.getElementById('navDrawer').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#navDrawer') && !e.target.closest('#moreBtn')) closeDrawer();
+});
+
+// ══════════════════════════════════════════════════════════════
+// LANGUAGE
+// ══════════════════════════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lbtn').forEach(b => {
+    b.classList.toggle('active',
+      b.textContent.trim() === l.toUpperCase() ||
+      (l==='zh' && b.textContent==='中文') ||
+      (l==='ja' && b.textContent==='日本語') ||
+      (l==='ko' && b.textContent==='한국어')
+    );
+  });
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════════════════════════
+function renderAll() {
+  const L = T[lang];
+  if (!L) return;
+
+  // P0-1: data-i18n — skip elements that have data-i18n children
+  // to prevent parent innerHTML overwriting child translations.
+  // Merged subtitle fields are now rendered via explicit IDs below.
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    if (el.querySelector('[data-i18n]')) return; // skip parents with i18n children
+    const k = el.getAttribute('data-i18n');
+    if (L[k] !== undefined) el.innerHTML = L[k];
+  });
+
+  // P0-1: Merged subtitle fields (formerly parent+child data-i18n pairs)
+  const heroSub = document.getElementById('heroSub');
+  if (heroSub && L.det_subtitle) {
+    const em = L.det_subtitle_em || '';
+    heroSub.innerHTML = L.det_subtitle + (em ? '<br><em style="color:var(--green);font-style:normal;font-weight:700">' + em + '</em>' : '');
+  }
+  const fhSub = document.getElementById('fhSub');
+  if (fhSub && L.fh_sub) {
+    const em = L.fh_sub_em || '';
+    fhSub.innerHTML = L.fh_sub + (em ? '<em style="color:var(--green);font-style:normal;font-weight:700">' + em + '</em>' : '');
+  }
+
+  // tab labels
+  document.querySelectorAll('.ntab[data-tab],.drawer-item[data-tab]').forEach(b => {
+    const k = 'tab_' + b.dataset.tab;
+    if (L[k]) {
+      const sp = b.querySelector('span[data-i18n]');
+      if (sp) sp.textContent = L[k];
+    }
+  });
+
+  // textarea placeholder
+  const ta = document.getElementById('pasteArea');
+  if (ta) ta.placeholder = L.paste_placeholder || '';
+
+  // chips
+  renderChips();
+
+  // monitor lines
+  const ml = document.getElementById('monLines');
+  if (ml && L.monitor_lines) {
+    ml.innerHTML = L.monitor_lines.map(({p,o},i) =>
+      `<div class="mline" style="animation-delay:${i*0.18}s"><span class="mp">${p}</span><span class="mo">${o}</span></div>`
+    ).join('');
+  }
+
+  // taxonomy
+  const tg = document.getElementById('taxGrid');
+  if (tg && L.taxonomy) {
+    tg.innerHTML = L.taxonomy.map(c =>
+      `<div class="tax-card"><div class="tax-tag">${c.tag}</div><div class="tax-title">${c.title}</div><div class="tax-desc">${c.desc}</div></div>`
+    ).join('');
+  }
+
+  // hall
+  const hg = document.getElementById('hallGrid');
+  if (hg && L.hall) {
+    hg.innerHTML = L.hall.map(h =>
+      `<div class="hall-card" data-rank="${h.rank}"><div class="hall-title">${h.title}</div><div class="hall-desc">${h.desc}</div><div class="hall-eg">${h.eg}</div></div>`
+    ).join('');
+  }
+
+  // manifesto
+  const mb = document.getElementById('manifestoBody');
+  if (mb && L.man_body) mb.innerHTML = L.man_body.map(p => `<p>${p}</p>`).join('');
+
+  // pq1/pq1_cite are handled by the data-i18n loop above (no special wrapper needed)
+}
+
+// ══════════════════════════════════════════════════════════════
+// CHIPS
+// ══════════════════════════════════════════════════════════════
+function renderChips() {
+  const L = T[lang];
+  const row = document.getElementById('chipsRow');
+  if (!row || !L.chips) return;
+  row.innerHTML = `<span class="chip-label">${L.chips_label||'Try an example →'}</span>` +
+    L.chips.map(c =>
+      `<button class="chip" onclick="useChip(${JSON.stringify(c.text).replace(/"/g,'&quot;')})">${c.label}</button>`
+    ).join('');
+}
+
+function useChip(text) {
+  const ta = document.getElementById('pasteArea');
+  ta.value = text;
+  onInput();
+  ta.focus();
+  ta.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// ══════════════════════════════════════════════════════════════
+// INPUT
+// ══════════════════════════════════════════════════════════════
+function onInput() {
+  const v = document.getElementById('pasteArea').value;
+  document.getElementById('cpill').textContent = `${v.length.toLocaleString()} chars`;
+  document.getElementById('tpill').textContent = `~${Math.round(v.length/3.5)} tokens`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// API CALL — timeout via Promise.race (avoids AbortSignal
+// serialisation errors in Vercel Edge / Service Worker envs)
+// ══════════════════════════════════════════════════════════════
+async function callAPI(system, userMsg, maxTok = 400, timeoutMs = 20000) {
+  // Build the fetch promise — no signal passed, so no DataCloneError
+  const fetchPromise = fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: maxTok,
+      system,
+      messages: [{ role: 'user', content: userMsg }]
+    })
+  });
+
+  // Timeout promise — rejects after timeoutMs
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      const err = new Error('TIMEOUT');
+      err.type = 'timeout';
+      reject(err);
+    }, timeoutMs);
+  });
+
+  let res;
+  try {
+    res = await Promise.race([fetchPromise, timeoutPromise]);
+  } catch (err) {
+    if (!err.type) err.type = 'network';
+    throw err;
+  }
+
+  if (!res.ok) {
+    const err = new Error(`HTTP_${res.status}`);
+    err.type = 'http'; err.status = res.status;
+    throw err;
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    const err = new Error('JSON_PARSE');
+    err.type = 'parse';
+    throw err;
+  }
+
+  if (data.error) {
+    const err = new Error(data.error.message || 'API_ERROR');
+    err.type = 'api';
+    throw err;
+  }
+
+  return data.content?.[0]?.text || '';
+}
+
+// Classify error → i18n toast key
+function errToast(err, L) {
+  if (err.type === 'timeout')  return L.err_timeout  || 'TIMED OUT — the AI is thinking too hard.';
+  if (err.type === 'network')  return L.err_fetch    || 'NETWORK ERROR — check connection.';
+  if (err.type === 'http')     return (L.err_http    || 'SERVER ERROR') + ' ' + (err.status || '');
+  if (err.type === 'parse')    return L.err_parse    || 'AI RETURNED NONSENSE — ironic, but true.';
+  return L.err_fetch || 'SOMETHING BROKE — classic.';
+}
+
+// Restore button + idle state on any failure
+function restoreAfterError(L) {
+  clearInterval(loadingInterval);
+  const btn = document.getElementById('detectBtn');
+  if (btn) { btn.disabled = false; }
+  const bi = document.getElementById('btnInner');
+  if (bi) bi.innerHTML = L.detect_btn;
+  const idle = document.getElementById('detIdle');
+  if (idle) idle.style.display = 'block';
+  const rw = document.getElementById('resultWrap');
+  if (rw) rw.style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════════════
+// DETECT
+// ══════════════════════════════════════════════════════════════
+async function runDetect() {
+  const L = T[lang];
+  const text = document.getElementById('pasteArea').value.trim();
+  if (!text) { showToast(L.err_short || 'PASTE SOMETHING'); return; }
+  if (text.length < 15) { showToast(L.err_length || 'TOO SHORT.'); return; }
+
+  const btn = document.getElementById('detectBtn');
+  btn.disabled = true;
+  let mi = 0;
+  document.getElementById('btnInner').innerHTML =
+    `<div class="btn-spinner"></div><span>${L.loading_msgs[0]}</span>`;
+  loadingInterval = setInterval(() => {
+    mi = (mi + 1) % L.loading_msgs.length;
+    const bi = document.getElementById('btnInner');
+    if (bi) bi.innerHTML = `<div class="btn-spinner"></div><span>${L.loading_msgs[mi]}</span>`;
+  }, 900);
+
+  document.getElementById('detIdle').style.display = 'none';
+  document.getElementById('resultWrap').style.display = 'none';
+
+  const t0 = Date.now();
+  try {
+    const raw = await callAPI(L.sys_prompt, L.user_prompt(text), 400);
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+
+    let clean = raw.replace(/```json|```/g, '').trim();
+    const m = clean.match(/\{[\s\S]*\}/);
+    if (!m) { const e = new Error('no JSON'); e.type = 'parse'; throw e; }
+    let d;
+    try { d = JSON.parse(m[0]); }
+    catch (pe) { pe.type = 'parse'; throw pe; }
+
+    lastResult = {
+      overall_score: Math.min(100, Math.max(0, Math.round(d.s || 0))),
+      dimensions: {
+        buzzword_density:       d.d?.b || 0,
+        originality_void:       d.d?.o || 0,
+        corporate_speak:        d.d?.c || 0,
+        emotional_manipulation: d.d?.e || 0,
+        meaninglessness:        d.d?.m || 0
+      },
+      // P0-2: store raw strings; esc() applied at render time
+      slop_phrases:  Array.isArray(d.p) ? d.p.filter(Boolean) : [],
+      roast:         typeof d.r === 'string' ? d.r : '',
+      irony_note:    typeof d.i === 'string' ? d.i : '',
+      elapsed,
+      originalText: text
+    };
+    renderResult(lastResult);
+  } catch (err) {
+    restoreAfterError(L);
+    showToast(errToast(err, L));
+    console.error('[runDetect]', err);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER RESULT
+// P0-2: All model output via textContent (never innerHTML).
+// P2-11: Order = score → roast → phrases → dims → irony → disclaimer
+// ══════════════════════════════════════════════════════════════
+function renderResult(data) {
+  clearInterval(loadingInterval);
+  const L = T[lang];
+  const btn = document.getElementById('detectBtn');
+  btn.disabled = false;
+  // detect_btn may contain emoji — static trusted string, innerHTML ok
+  document.getElementById('btnInner').innerHTML = L.detect_btn;
+
+  const s   = data.overall_score;
+  const vi  = (VERDICTS.find(v => s >= v.min) || VERDICTS[4]).ci;
+  const col = COLORS[vi];
+  const resId = 'RPT-' + Date.now().toString(36).toUpperCase().slice(-6);
+
+  document.getElementById('resTime').textContent = data.elapsed ? `${data.elapsed}s` : '';
+  document.getElementById('resId').textContent   = resId;
+
+  const dimLabels = L.dim_labels || [];
+  const dimHints  = L.dim_hints  || [];
+
+  // Build result HTML — only trusted static i18n strings go into innerHTML;
+  // model output (roast, irony, phrases, dims) inserted via textContent after render.
+  document.getElementById('resBody').innerHTML = `
+    <!-- 1. SCORE -->
+    <div class="score-row">
+      <div style="position:relative;flex-shrink:0">
+        <div class="score-dial" id="sDial"
+          style="border-color:${col};background:${col}10;box-shadow:0 0 28px ${col}22">
+          <span class="dial-num" id="dNum" style="color:${col}">0</span>
+          <span class="dial-lbl">${esc(L.score_lbl || 'SHIT SCORE')}</span>
+        </div>
+        <div class="dial-pulse" style="border-color:${col}"></div>
+      </div>
+      <div class="verdict-col">
+        <span class="v-emoji" aria-hidden="true">${L.verdict_emojis[vi]}</span>
+        <div class="v-name" style="color:${col}">${esc(L.verdict_names[vi])}</div>
+        <div class="v-desc">${esc(L.verdict_descs[vi])}</div>
+      </div>
+    </div>
+
+    <!-- 2. ROAST -->
+    <div class="roast-blk">
+      <div class="sec-micro">${esc(L.roast_lbl || 'OFFICIAL VERDICT')}</div>
+      <div class="roast-txt" id="roastTxt"></div>
+    </div>
+
+    <!-- 3. SMOKING GUN PHRASES -->
+    <div class="phrases-sec" id="phrasesSec" style="display:none">
+      <div class="sec-micro">${esc(L.phrases_lbl || '⚠ SMOKING GUN PHRASES')}</div>
+      <div class="phrase-list" id="phraseList"></div>
+    </div>
+
+    <!-- 4. DIMENSIONS -->
+    <div class="dims-section">
+      <div class="dims-hdr">${esc(L.dims_section_hdr || 'DIMENSION BREAKDOWN')}</div>
+      ${DIMKEYS.map((k, i) => {
+        const v = Math.min(100, Math.max(0, Math.round(data.dimensions[k] || 0)));
+        return `<div class="dim-row">
+          <div class="dim-top">
+            <span class="dim-name">${esc(dimLabels[i] || k)}</span>
+            <span class="dim-pct" style="color:${DIMCOLORS[i]}">${v}%</span>
+          </div>
+          <div class="dim-hint">${esc(dimHints[i] || '')}</div>
+          <div class="dim-track">
+            <div class="dim-fill" id="df${i}" style="background:${DIMCOLORS[i]}"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- 5. IRONY -->
+    <div class="irony-blk">
+      <div class="sec-micro">${esc(L.irony_lbl || 'MANDATORY IRONY DISCLOSURE')}</div>
+      <div class="irony-txt" id="ironyTxt"></div>
+    </div>
+
+    <!-- 6. DISCLAIMER -->
+    <div class="disclaimer-blk">
+      <span class="disclaimer-ico">NOTICE</span>
+      <span class="disclaimer-txt">${esc(L.disclaimer_txt || '')}</span>
+    </div>
+
+    <!-- REWRITE BLOCK -->
+    <div class="rewrite-blk" id="rewriteBlk">
+      <div class="sec-micro">
+        ${esc(L.rewrite_lbl || 'REHABILITATED VERSION')}
+        <span style="color:rgba(0,255,136,0.3);font-style:italic;font-weight:400">
+          &nbsp;${esc(L.rewrite_note || '')}
+        </span>
+      </div>
+      <div class="rewrite-txt" id="rewriteTxt"></div>
+    </div>
+
+    <!-- ACTION ROW -->
+    <div class="action-row">
+      <button class="abtn roast-share" onclick="copyRoast()"
+        aria-label="${esc(L.copy_roast || 'Copy Roast')}">${esc(L.copy_roast || 'Copy Roast 🔥')}</button>
+      <button class="abtn hi" onclick="copyFull()"
+        aria-label="${esc(L.copy_full || 'Copy Full Result')}">${esc(L.copy_full || 'Copy Full Result')}</button>
+      <button class="abtn" onclick="downloadCard()"
+        aria-label="${esc(L.share_card || 'Download Card')}">${esc(L.share_card || 'Download Card 🖼')}</button>
+    </div>
+    <div class="action-row">
+      <button class="abtn green-btn" id="rewriteBtn" onclick="runRewrite()"
+        aria-label="${esc(L.rewrite_btn || 'Make It Less Shit')}">${esc(L.rewrite_btn || '✨ Make It Less Shit')}</button>
+    </div>
+
+    <!-- REPLAY ROW -->
+    <div class="replay-row">
+      <span class="replay-label">${esc(L.replay_label || 'NEXT MOVE:')}</span>
+      <button class="abtn" onclick="resetDetector()">${esc(L.retry_btn || 'Analyze Another')}</button>
+      <button class="abtn" onclick="tryWorse()">${esc(L.worse_btn || 'Try Something Worse →')}</button>
+    </div>
+  `;
+
+  // P0-2: Insert model output via textContent — never innerHTML
+  document.getElementById('roastTxt').textContent = `"${data.roast}"`;
+  document.getElementById('ironyTxt').textContent = data.irony_note;
+
+  // phrases
+  if (data.slop_phrases.length) {
+    const sec  = document.getElementById('phrasesSec');
+    const list = document.getElementById('phraseList');
+    sec.style.display = '';
+    list.innerHTML = ''; // clear; phrases built with safe textContent nodes
+    data.slop_phrases.forEach(p => {
+      const span = document.createElement('span');
+      span.className = 'phrase-tag';
+      span.textContent = `"${p}"`;  // P0-2: textContent
+      list.appendChild(span);
+    });
+  }
+
+  document.getElementById('resultWrap').style.display = 'block';
+
+  // animate score
+  let cur = 0;
+  const tick = () => {
+    cur += Math.max(1, Math.ceil((s - cur) / 7));
+    cur  = Math.min(cur, s);
+    const el = document.getElementById('dNum');
+    if (el) el.textContent = cur;
+    if (cur < s) requestAnimationFrame(tick);
+  };
+  setTimeout(() => requestAnimationFrame(tick), 120);
+
+  // animate bars
+  DIMKEYS.forEach((k, i) => {
+    const v  = Math.min(100, Math.max(0, Math.round(data.dimensions[k] || 0)));
+    const el = document.getElementById('df' + i);
+    if (el) setTimeout(() => { el.style.width = v + '%'; }, 60 + i * 40);
+  });
+
+  setTimeout(() =>
+    document.getElementById('resultWrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' }),
+    70
+  );
+}
+
+// ══════════════════════════════════════════════════════════════
+// REWRITE — P0-4 timeout, P0-2 textContent, P1-5 i18n error
+// ══════════════════════════════════════════════════════════════
+async function runRewrite() {
+  if (!lastResult || rewriteLoading) return;
+  const L = T[lang];
+  const btn = document.getElementById('rewriteBtn');
+  btn.disabled = true;
+  rewriteLoading = true;
+
+  const blk = document.getElementById('rewriteBlk');
+  const txt = document.getElementById('rewriteTxt');
+  blk.classList.add('visible');
+  // loading indicator — static string, textContent fine
+  txt.textContent = L.rewrite_loading || 'rewriting…';
+
+  try {
+    const result = await callAPI(L.sys_rewrite, L.user_rewrite(lastResult.originalText), 400);
+    // P0-2: textContent for model output
+    txt.textContent = result.trim();
+    btn.textContent = '✓ ' + (L.rewrite_btn || 'Make It Less Shit');
+    btn.onclick = () => {
+      navigator.clipboard.writeText(result.trim())
+        .then(() => showToast(L.rewrite_toast || 'COPIED'));
+    };
+  } catch (err) {
+    // P1-5: i18n error message, no hardcoded English fallback beyond a generic key
+    txt.textContent = L.err_rewrite_failed || '[Rewrite failed — content may be beyond saving.]';
+    btn.disabled = false;
+    console.error('[runRewrite]', err);
+  }
+  rewriteLoading = false;
+}
+
+// ══════════════════════════════════════════════════════════════
+// SHARE ACTIONS
+// P0-2: model strings via esc() or plain concat (canvas textContent equiv)
+// P1-6: SITE_URL instead of hardcoded domain
+// P1-7: await document.fonts.ready before canvas draw
+// ══════════════════════════════════════════════════════════════
+function copyRoast() {
+  if (!lastResult) return;
+  const L  = T[lang];
+  const vi = (VERDICTS.find(v => lastResult.overall_score >= v.min) || VERDICTS[4]).ci;
+  // plain string concat — no HTML injection risk in clipboard text
+  const txt = `💩 ${lastResult.overall_score}/100 — ${L.verdict_names[vi]}\n\n"${lastResult.roast}"\n\n${SITE_URL}`;
+  navigator.clipboard.writeText(txt).then(() => showToast(L.copied_toast || 'COPIED'));
+}
+
+function copyFull() {
+  if (!lastResult) return;
+  const L    = T[lang];
+  const vi   = (VERDICTS.find(v => lastResult.overall_score >= v.min) || VERDICTS[4]).ci;
+  const dims = DIMKEYS.map((k, i) =>
+    `${(L.dim_labels || [])[i] || k}: ${Math.round(lastResult.dimensions[k] || 0)}%`
+  );
+  const lines = [
+    `💩 AI SHIT DETECTOR — OFFICIAL LAB REPORT`,
+    `Score: ${lastResult.overall_score}/100 — ${L.verdict_names[vi]} ${L.verdict_emojis[vi]}`,
+    ``,
+    dims.join(' | '),
+    ``,
+    lastResult.slop_phrases.length
+      ? `Smoking guns: ${lastResult.slop_phrases.map(p => '"' + p + '"').join(', ')}`
+      : null,
+    ``,
+    `Verdict: "${lastResult.roast}"`,
+    ``,
+    SITE_URL
+  ].filter(l => l !== null);
+  navigator.clipboard.writeText(lines.join('\n'))
+    .then(() => showToast(L.copied_toast || 'COPIED'));
+}
+
+async function downloadCard() {
+  if (!lastResult) return;
+  const L   = T[lang];
+  const vi  = (VERDICTS.find(v => lastResult.overall_score >= v.min) || VERDICTS[4]).ci;
+  const col = COLORS[vi];
+  const canvas = document.getElementById('shareCanvas');
+  const ctx    = canvas.getContext('2d');
+  const W = 800, H = 420;
+
+  // P1-7: wait for fonts before drawing
+  await document.fonts.ready;
+
+  ctx.fillStyle = '#070707';
+  ctx.fillRect(0, 0, W, H);
+
+  // grid
+  ctx.strokeStyle = 'rgba(255,32,32,0.06)'; ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // top bar
+  ctx.fillStyle = col; ctx.fillRect(0, 0, W, 8);
+
+  // score circle
+  const cx = 100, cy = H / 2, r = 72;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.stroke();
+  ctx.fillStyle = col + '18'; ctx.fill();
+  ctx.fillStyle = col;
+  ctx.font = 'bold 64px "Bebas Neue", serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(String(lastResult.overall_score), cx, cy - 8);
+  ctx.font = '12px "Space Mono", monospace';
+  ctx.fillStyle = 'rgba(232,224,204,0.4)';
+  ctx.fillText('SHIT SCORE', cx, cy + 46);
+
+  // verdict text
+  ctx.textAlign = 'left';
+  const vx = 200;
+  ctx.font = '18px "Space Mono", monospace';
+  ctx.fillStyle = 'rgba(232,224,204,0.45)';
+  ctx.fillText('💩 AI SHIT DETECTOR™', vx, 70);
+  ctx.font = 'bold 52px "Bebas Neue", serif';
+  ctx.fillStyle = col;
+  ctx.fillText(L.verdict_names[vi], vx, 140);
+
+  // verdict desc — wrap at 530px
+  ctx.font = '17px "Courier Prime", monospace';
+  ctx.fillStyle = 'rgba(232,224,204,0.65)';
+  const descWords = (L.verdict_descs[vi] || '').split(' ');
+  let line = '', ly = 172;
+  for (const w of descWords) {
+    const test = line + w + ' ';
+    if (ctx.measureText(test).width > 530 && line) { ctx.fillText(line, vx, ly); line = w + ' '; ly += 24; }
+    else line = test;
+  }
+  if (line) ctx.fillText(line, vx, ly);
+
+  // roast — plain text on canvas, no XSS risk
+  ctx.font = 'italic 15px "Courier Prime", monospace';
+  ctx.fillStyle = 'rgba(255,230,0,0.8)';
+  const roastWords = ('"' + lastResult.roast + '"').split(' ');
+  line = ''; ly = H - 120;
+  for (const w of roastWords) {
+    const test = line + w + ' ';
+    if (ctx.measureText(test).width > 560 && line) { ctx.fillText(line, vx, ly); line = w + ' '; ly += 22; }
+    else line = test;
+  }
+  if (line) ctx.fillText(line, vx, ly);
+
+  // url
+  ctx.font = '12px "Space Mono", monospace';
+  ctx.fillStyle = 'rgba(232,224,204,0.2)';
+  ctx.textAlign = 'right';
+  ctx.fillText(SITE_URL, W - 24, H - 20);
+
+  const a = document.createElement('a');
+  a.download = `shit-score-${lastResult.overall_score}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  showToast(L.card_toast || 'CARD DOWNLOADED');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RESET / RETRY
+// ══════════════════════════════════════════════════════════════
+function resetDetector() {
+  document.getElementById('pasteArea').value = '';
+  document.getElementById('cpill').textContent = '0 chars';
+  document.getElementById('tpill').textContent = '~0 tokens';
+  document.getElementById('resultWrap').style.display = 'none';
+  document.getElementById('detIdle').style.display = 'block';
+  lastResult = null; rewriteLoading = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// P1-8: tryWorse picks chip with highest slopRank (not last index)
+function tryWorse() {
+  const L = T[lang];
+  const samples = (L.chips && L.chips.length) ? L.chips : T.en.chips;
+  const worst = samples.reduce((best, c) =>
+    (c.slopRank || 0) > (best.slopRank || 0) ? c : best
+  , samples[0]);
+  if (worst) useChip(worst.text);
+  else resetDetector();
+}
+
+// ══════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;  // P0-2: textContent, not innerHTML
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  renderAll();
+  if (WORKER_URL.includes('YOUR-WORKER')) {
+    const b = document.getElementById('cfgBanner');
+    if (b) {
+      b.classList.add('visible');
+      const cu = document.getElementById('cfgUrl');
+      if (cu) cu.textContent = WORKER_URL;  // P0-2: textContent
+    }
+  }
+});
+</script>
+</body>
+</html>
