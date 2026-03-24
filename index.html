@@ -1241,7 +1241,7 @@ async function runDetect() {
 
   const t0 = Date.now();
   try {
-    const raw = await callAPI(L.sys_prompt, L.user_prompt(text), 400);
+    const raw = await callAPI(L.sys_prompt, L.user_prompt(text), 600);
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
 
     let clean = raw.replace(/```json|```/g, '').trim();
@@ -1455,7 +1455,7 @@ async function runRewrite() {
   txt.textContent = L.rewrite_loading || 'rewriting…';
 
   try {
-    const result = await callAPI(L.sys_rewrite, L.user_rewrite(lastResult.originalText), 400);
+    const result = await callAPI(L.sys_rewrite, L.user_rewrite(lastResult.originalText), 500);
     // P0-2: textContent for model output
     txt.textContent = result.trim();
     btn.textContent = '✓ ' + (L.rewrite_btn || 'Make It Less Shit');
